@@ -1,0 +1,72 @@
+﻿@model IEnumerable<SocialMedia.Models.Post>
+
+@{
+    ViewData["Title"] = "Posts Feed";
+}
+
+<div class="container pt-2">
+    <div class="d-flex justify-content-center mb-4">
+        <a class="btn btn-primary" asp-controller="Posts" asp-action="Create">
+            Create Post
+        </a>
+    </div>
+    @foreach (var post in Model)
+    {
+        <div class="card mb-3">
+            <div class="card-header">
+                <strong>
+                    <a asp-controller="Users" asp-action="Details" asp-route-id="@post.User.Id">
+                        @post.User.FullName
+                    </a>
+                </strong>
+                <span class="float-end text-muted">@post.CreationDate</span>
+            </div>
+            <div class="card-body">
+                <p>@post.Content</p>
+                <a class="btn btn-link" asp-controller="Posts" asp-action="Details" asp-route-id="@post.PostID">View Details</a>
+                <div class="d-flex justify-content-end">
+                    @if (post.Likes != null)
+                    {
+                        var likeCount = post.Likes.Count(l => l.LikeValue == true);
+                        var dislikeCount = post.Likes.Count(l => l.LikeValue == false);
+                        <div class="d-flex align-items-center">
+                            <form asp-controller="PostLikes" asp-action="Like" method="post">
+                                <input type="hidden" name="postId" value="@post.PostID" />
+                                <button type="submit" class="btn btn-light me-3">
+                                    👍 @likeCount
+                                </button>
+                            </form>
+
+                            <form asp-controller="PostLikes" asp-action="Dislike" method="post">
+                                <input type="hidden" name="postId" value="@post.PostID" />
+                                <button type="submit" class="btn btn-light">
+                                    👎 @dislikeCount
+                                </button>
+                            </form>
+                        </div>
+                    }
+                </div>
+                @if (post.Comments != null && post.Comments.Any())
+                {
+                    var firstComment = post.Comments.OrderBy(c => c.CreationDate).FirstOrDefault();
+
+                    if (firstComment?.User != null)
+                    {
+                        <div class="mt-3 border-top pt-2">
+                            <strong>@firstComment.User.FullName:</strong>
+                            <span>@firstComment.Message</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="mt-3 border-top pt-2">
+                            <span>No comments available.</span>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    }
+
+
+</div>

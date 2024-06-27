@@ -1,0 +1,78 @@
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    padding-right:20%;
+    padding-left:100px;
+    padding-top: 200px;
+    background-color:aliceblue;
+    display:flex;
+    justify-content:center;
+    height:800px;
+}
+form{
+    background-color:aliceblue;
+    border: 3px solid aliceblue;
+    border-radius: 10px;
+    padding:5px;
+}
+.loginBox{
+    background-color:white;
+    min-width: 400px;
+    max-width: 700px;
+    min-height: 310px;
+    border: solid 2px white;
+    border-radius: 10px;
+    position: relative;
+    margin:auto;
+    z-index: 2;
+    padding:10px;
+}
+.imgcontainer{
+    width:auto;
+    border-radius:50%;
+    text-align:center;
+}
+
+.greetingcontainer{
+    align-content:center;
+    text-align:left;
+}
+
+#avatar{
+    width: 10px;;
+}
+
+button{
+    padding:14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    border-radius: 10px;
+
+    background-color:blue;
+    color:white;
+}
+button:hover{
+    opacity: 0.8;
+}
+
+input{
+    width: 100%;
+    padding: 12px 20px;
+    margin: 3px 3px;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius:10px;
+    box-sizing: border-box;
+}
+.row{
+    max-width:800px;
+}
+.formprompt{
+    margin-top:25px;
+    border:3px;
+}
+#sendemail{
+    margin-top:15px;
+    margin-bottom:10px;
+}

@@ -1,0 +1,29 @@
+﻿@model IEnumerable<SocialMedia.Models.UserViewModel>
+
+@{
+    ViewData["Title"] = "Browse Users";
+}
+
+<h1>Browse Users</h1>
+
+<div class="container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td>@user.FullName</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@user.Id">View Profile</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

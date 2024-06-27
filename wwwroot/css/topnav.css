@@ -1,0 +1,16 @@
+﻿.topnav {
+    background-color: rgb(91, 100, 129);
+    border-bottom: none;
+}
+
+.topnav .nav-link {
+    color: white;
+}
+
+.topnav .nav-link:hover {
+    color: lightgray;
+}
+
+.topnav .navbar-toggler {
+    border-color: white;
+}

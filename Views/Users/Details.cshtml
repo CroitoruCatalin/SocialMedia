@@ -1,0 +1,117 @@
+﻿@model SocialMedia.Models.User
+
+@{
+    ViewData["Title"] = $"{Model.FullName}";
+}
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<User> UserManager
+<div class="container">
+    <div class="text-center mb-4">
+        <div class="d-flex align-items-center profile-ribbon" style="background-color: rgb(33, 66, 95); padding: 10px; border-radius: 5px;">
+            <div class="profile-photo">
+                <img src="~/assets/doeland.png" class="rounded-circle" width="100" height="100" alt="@Model.FullName" />
+            </div>
+            <div class="ms-3" style="color: white;">
+                <h2>@Model.FullName</h2>
+            </div>
+        </div>
+    </div>
+        
+    <div class="mb-3">
+        <a class="btn btn-primary" asp-controller="Posts" asp-action="Create">Create New Post</a>
+    </div>
+
+
+
+    <div class="mb-3">
+
+        @if (Model.Id != @UserManager.GetUserId(User))
+        {
+            if (Model.Followers.Any(f => f.UserId == @UserManager.GetUserId(User)))
+            {
+                <form asp-controller="Users" asp-action="Unfollow" method="post" style="display:inline;">
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <button type="submit" class="btn btn-danger">Unfollow</button>
+                </form>
+            }
+            else
+            {
+                <form asp-controller="Users" asp-action="Follow" method="post" style="display:inline;">
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <button type="submit" class="btn btn-success">Follow</button>
+                </form>
+            }
+        }
+        
+
+    </div>
+
+    <div class="mb-3">
+        <a class="btn btn-info" asp-controller="Users" asp-action="Followers" asp-route-id="@Model.Id">Followers (@Model.Followers.Count)</a>
+    </div>
+
+
+
+
+    @if (Model.Posts != null && Model.Posts.Any())
+    {
+        @foreach (var post in Model.Posts.OrderByDescending(p => p.CreationDate))
+        {
+            var likeCount = post.Likes?.Count(l => l.LikeValue) ?? 0;
+            var dislikeCount = post.Likes?.Count(l => !l.LikeValue) ?? 0;
+
+            <div class="card mb-3">
+                <div class="card-header">
+                    <strong>@post.User?.FullName</strong>
+                    <span class="float-end text-muted">@post.CreationDate</span>
+                </div>
+                <div class="card-body">
+                    <p>@post.Content</p>
+
+                    <a class="btn btn-link" asp-controller="Posts" asp-action="Details" asp-route-id="@post.PostID">View Details</a>
+
+                    <div class="d-flex justify-content-end">
+                        @if (post.Likes != null)
+                        {
+                            <div class="d-flex align-items-center">
+                                <form asp-controller="PostLikes" asp-action="Like" method="post">
+                                    <input type="hidden" name="postId" value="@post.PostID" />
+                                    <button type="submit" class="btn btn-light me-3">
+                                        👍 @likeCount
+                                    </button>
+                                </form>
+
+                                <form asp-controller="PostLikes" asp-action="Dislike" method="post">
+                                    <input type="hidden" name="postId" value="@post.PostID" />
+                                    <button type="submit" class="btn btn-light">
+                                        👎 @dislikeCount
+                                    </button>
+                                </form>
+                            </div>
+                        }
+                    </div>
+
+
+                    @if (post.Comments != null && post.Comments.Any())
+                    {
+                        var firstComment = post.Comments.OrderBy(c => c.CreationDate).FirstOrDefault();
+
+                        if (firstComment != null && firstComment.User != null)
+                        {
+                            <div class="mt-3 border-top pt-2">
+                                <strong>@firstComment.User.FullName:</strong>
+                                <span>@firstComment.Message</span>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="mt-3 border-top pt-2">
+                                <span>No comments available.</span>
+                            </div>
+                        }
+                    }
+
+                </div>
+            </div>
+        }
+    }

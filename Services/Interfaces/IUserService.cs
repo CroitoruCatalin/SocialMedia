@@ -1,0 +1,22 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using SocialMedia.Models;
+
+namespace SocialMedia.Services.Interfaces
+{
+    public interface IUserService
+    {
+        Task<User?> GetUserById(string userId);
+        Task<User?> GetUserByIdWithPosts(string userId);
+        Task<IEnumerable<User>> GetAllUsers();
+        Task CreateUser(User user);
+        Task UpdateUser(User user);
+        Task DeleteUser(string userId);
+        Task<bool> UserExists(string userId);
+
+        Task FollowUser(string userId, string followUserId);
+        Task UnfollowUser(string userId, string followUserId);
+        Task<IEnumerable<UserViewModel>> GetFollowers(string userId);
+        Task<bool> IsFollowing(string userId, string followUserId);
+        Task<User?> GetUserByIdWithPostsAndFollowers(string userId);
+    }
+}

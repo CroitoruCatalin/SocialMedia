@@ -1,0 +1,58 @@
+﻿@model SocialMedia.Models.Post
+
+@{
+    ViewData["Title"] = "Details";
+    var currentUserId = ViewData["CurrentUserId"] as string;
+}
+
+<h1>Details</h1>
+
+<div class="container">
+    <div class="card mb-3 mt-3">
+        <div class="card-header">
+            <strong>@Model.User?.FullName</strong>
+            <span class="float-end text-muted">@Model.CreationDate</span>
+        </div>
+        <div class="card-body">
+            <p>@Model.Content</p>
+            <div class="d-flex justify-content-between mt-3">
+                <a class="btn btn-success" asp-controller="Comments" asp-action="Create" asp-route-postId="@Model.PostID">Add Comment</a>
+            </div>
+            @if (Model.Comments != null && Model.Comments.Any())
+            {
+                foreach (var comment in Model.Comments.OrderBy(c => c.CreationDate))
+                {
+                    <div class="mt-3 border-top pt-2">
+                        <strong>@comment.User?.FullName:</strong>
+                        <span>@comment.Message</span>
+                        @if (currentUserId == comment.UserID)
+                        {
+                            <div class="d-flex justify-content-end mt-2">
+                                <a class="btn btn-primary btn-sm bi bi-pen mx-1" asp-controller="Comments" asp-action="Edit" asp-route-id="@comment.CommentID">Edit</a>
+                                <a class="btn btn-danger btn-sm bi bi-trash mx-1" asp-controller="Comments" asp-action="Delete" asp-route-id="@comment.CommentID">Delete</a>
+                            </div>
+                        }
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="mt-3 border-top pt-2">
+                    <span>No comments available.</span>
+                </div>
+            }
+
+            @if(currentUserId == Model.UserID)
+            {
+                <div class="d-flex justify-content-end mt-3">
+                    <a class="btn btn-primary mx-1" asp-action="Edit" asp-route-id="@Model?.PostID">Edit</a>
+                    <a class="btn btn-danger mx-1" asp-action="Delete" asp-route-id="@Model?.PostID">Delete</a>
+                </div>
+            }
+
+            <div class="d-flex justify-content-end mt-3">
+                <a class="btn btn-secondary mx-1" asp-action="Index">Back to List</a>
+            </div>
+        </div>
+    </div>
+</div>
