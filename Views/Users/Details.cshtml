@@ -4,6 +4,8 @@
     ViewData["Title"] = $"{Model.FullName}";
     var likeUrl = Url.Action("Like", "PostLikes");
     var dislikeUrl = Url.Action("Dislike", "PostLikes");
+    var followUrl = Url.Action("Follow", "Users");
+    var unfollowUrl = Url.Action("Unfollow", "Users");
 }
 @using Microsoft.AspNetCore.Identity
 @inject UserManager<User> UserManager
@@ -31,17 +33,11 @@
         {
             if (Model.Followers.Any(f => f.UserId == @UserManager.GetUserId(User)))
             {
-                <form asp-controller="Users" asp-action="Unfollow" method="post" style="display:inline;">
-                    <input type="hidden" name="id" value="@Model.Id" />
-                    <button type="submit" class="btn btn-danger">Unfollow</button>
-                </form>
+                <button type="button" class="btn btn-danger" data-user-id="@Model.Id" onclick="unfollowUser('@Model.Id', '@unfollowUrl')">Unfollow</button>
             }
             else
             {
-                <form asp-controller="Users" asp-action="Follow" method="post" style="display:inline;">
-                    <input type="hidden" name="id" value="@Model.Id" />
-                    <button type="submit" class="btn btn-success">Follow</button>
-                </form>
+                <button type="button" class="btn btn-success" data-user-id="@Model.Id" onclick="followUser('@Model.Id', '@followUrl')">Follow</button>
             }
         }
         
@@ -49,7 +45,9 @@
     </div>
 
     <div class="mb-3">
-        <a class="btn btn-info" asp-controller="Users" asp-action="Followers" asp-route-id="@Model.Id">Followers (@Model.Followers.Count)</a>
+        <a class="btn btn-info" asp-controller="Users" asp-action="Followers" asp-route-id="@Model.Id">
+            Followers (<span id="followers-count">@Model.Followers.Count</span>)
+        </a>
     </div>
 
 
@@ -113,4 +111,5 @@
     }
     @section Scripts{
         <script src="~/js/PostLikeDislike.js"></script>
+        <script src="~/js/UserInterraction.js"></script>
     }

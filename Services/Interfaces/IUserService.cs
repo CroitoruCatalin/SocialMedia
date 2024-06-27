@@ -13,8 +13,8 @@ namespace SocialMedia.Services.Interfaces
         Task DeleteUser(string userId);
         Task<bool> UserExists(string userId);
 
-        Task FollowUser(string userId, string followUserId);
-        Task UnfollowUser(string userId, string followUserId);
+        Task<int> FollowUser(string userId, string followUserId);
+        Task<int> UnfollowUser(string userId, string followUserId);
         Task<IEnumerable<UserViewModel>> GetFollowers(string userId);
         Task<bool> IsFollowing(string userId, string followUserId);
         Task<User?> GetUserByIdWithPostsAndFollowers(string userId);
