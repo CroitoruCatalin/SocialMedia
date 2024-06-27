@@ -28,7 +28,7 @@
                 @Html.DisplayNameFor(model => model.PasswordHash)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Photo)
+                @Html.DisplayNameFor(model => model.ProfilePicture)
             </th>
             <th></th>
         </tr>
@@ -52,7 +52,7 @@
                 @Html.DisplayFor(modelItem => item.PasswordHash)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Photo)
+                    @Html.DisplayFor(modelItem => item.ProfilePicture)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
