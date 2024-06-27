@@ -154,15 +154,26 @@ namespace SocialMedia.Controllers
 
             if(currentUserId == id)
             {
-                return RedirectToAction("Details", new { id });
+                return Json(new
+                {
+                    success = false, message = "Cannot follow yourself"
+                });
             }
 
             var isFollowing = await _userService.IsFollowing(currentUserId, id);
+            int followersCount = 0;
+
             if(!isFollowing)
             {
-                await _userService.FollowUser(currentUserId, id);
-            }    
-            return RedirectToAction("Details", new { id });
+                followersCount = await _userService.FollowUser(currentUserId, id);
+            }
+
+            return Json(new
+            {
+                success = true,
+                message = "User followed successfully",
+                followersCount
+            }) ;
         }
 
         [HttpPost]
@@ -171,12 +182,18 @@ namespace SocialMedia.Controllers
             var currentUserId = _userManager.GetUserId(User);
 
             var isFollowing = await _userService.IsFollowing(currentUserId, id);
+            int followersCount = 0;
             if (isFollowing)
             {
-                await _userService.UnfollowUser(currentUserId, id);
+                followersCount = await _userService.UnfollowUser(currentUserId, id);
             }
 
-            return RedirectToAction("Details", new { id });
+            return Json(new
+            {
+                success = true,
+                message = "User unfollowed successfully",
+                followersCount
+            });
         }
 
         public async Task<IActionResult> Followers(string id)

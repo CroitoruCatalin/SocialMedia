@@ -72,18 +72,29 @@ namespace SocialMedia.Services
                 .FindByCondition(u => u.Id == id).AnyAsync();
         }
 
-        public async Task FollowUser(string userId, string followUserId)
+        public async Task<int> FollowUser(string userId, string followUserId)
         {
             var userUser = new UserUser { UserId = userId, FriendId = followUserId };
             await _repositoryWrapper.UserRepository.FollowUser(userUser);
             await _repositoryWrapper.SaveAsync();
+
+            return await _repositoryWrapper.UserRepository
+                .FindByCondition(u => u.Id == followUserId)
+                .Select(u => u.Followers.Count)
+                .FirstOrDefaultAsync();
         }
 
-        public async Task UnfollowUser(string userId, string followUserId)
+        public async Task<int> UnfollowUser(string userId, string followUserId)
         {
             var userUser = new UserUser { UserId = userId, FriendId = followUserId };
             await _repositoryWrapper.UserRepository.UnfollowUser(userUser);
             await _repositoryWrapper.SaveAsync();
+
+            // Return the updated followers count
+            return await _repositoryWrapper.UserRepository
+                .FindByCondition(u => u.Id == followUserId)
+                .Select(u => u.Followers.Count)
+                .FirstOrDefaultAsync();
         }
 
         public async Task<IEnumerable<UserViewModel>> GetFollowers(string userId)
