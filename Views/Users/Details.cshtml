@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = $"{Model.FullName}";
+    var likeUrl = Url.Action("Like", "PostLikes");
+    var dislikeUrl = Url.Action("Dislike", "PostLikes");
 }
 @using Microsoft.AspNetCore.Identity
 @inject UserManager<User> UserManager
@@ -74,19 +76,13 @@
                         @if (post.Likes != null)
                         {
                             <div class="d-flex align-items-center">
-                                <form asp-controller="PostLikes" asp-action="Like" method="post">
-                                    <input type="hidden" name="postId" value="@post.PostID" />
-                                    <button type="submit" class="btn btn-light me-3">
-                                        👍 @likeCount
-                                    </button>
-                                </form>
+                                <button type="button" class="btn btn-light me-3" onclick="likePost(@post.PostID, '@likeUrl')">
+                                    👍 <span id="like-count-@post.PostID">@likeCount</span>
+                                </button>
 
-                                <form asp-controller="PostLikes" asp-action="Dislike" method="post">
-                                    <input type="hidden" name="postId" value="@post.PostID" />
-                                    <button type="submit" class="btn btn-light">
-                                        👎 @dislikeCount
-                                    </button>
-                                </form>
+                                <button type="button" class="btn btn-light" onclick="dislikePost(@post.PostID, '@dislikeUrl')">
+                                    👎 <span id="dislike-count-@post.PostID">@dislikeCount</span>
+                                </button>
                             </div>
                         }
                     </div>
@@ -114,4 +110,7 @@
                 </div>
             </div>
         }
+    }
+    @section Scripts{
+        <script src="~/js/PostLikeDislike.js"></script>
     }

@@ -25,19 +25,29 @@ namespace SocialMedia.Controllers
             _userManager = userManager;
         }
 
+        [HttpPost]
         public async Task<IActionResult> Like(int postId)
         {
-            System.Security.Claims.ClaimsPrincipal currentUser = this.User;
-            var userId = _userManager.GetUserId(currentUser);
+            var userId = _userManager.GetUserId(User);
             await _postLikeService.LikePost(postId, userId);
-            return Redirect(Request.Headers["Referer"].ToString());
+
+            var post = await _context.Posts.Include(p => p.Likes).FirstOrDefaultAsync(p => p.PostID == postId);
+            var likeCount = post.Likes.Count(l => l.LikeValue == true);
+            var dislikeCount = post.Likes.Count(l => l.LikeValue == false);
+
+            return Json(new { likeCount, dislikeCount });
         }
+        [HttpPost]
         public async Task<IActionResult> Dislike(int postId)
         {
-            System.Security.Claims.ClaimsPrincipal currentUser = this.User;
-            var userId = _userManager.GetUserId(currentUser);
+            var userId = _userManager.GetUserId(User);
             await _postLikeService.DislikePost(postId, userId);
-            return Redirect(Request.Headers["Referer"].ToString()); // Redirect back to the posts page
+
+            var post = await _context.Posts.Include(p => p.Likes).FirstOrDefaultAsync(p => p.PostID == postId);
+            var likeCount = post.Likes.Count(l => l.LikeValue == true);
+            var dislikeCount = post.Likes.Count(l => l.LikeValue == false);
+
+            return Json(new { likeCount, dislikeCount });
         }
 
     }
