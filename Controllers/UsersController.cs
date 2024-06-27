@@ -20,13 +20,15 @@ namespace SocialMedia.Controllers
         private IUserService _userService;
         private readonly UserManager<User> _userManager;
         private readonly ILogger<UsersController> _logger;
+        private readonly SocialContext _context;
 
 
-        public UsersController(IUserService userService, UserManager<User> userManager, ILogger<UsersController> logger)
+        public UsersController(IUserService userService, UserManager<User> userManager, ILogger<UsersController> logger, SocialContext context)
         {
             _userService = userService;
             _userManager = userManager;
             _logger = logger;
+            _context = context;
         }
         public async Task<IActionResult> Index()
         {
@@ -206,5 +208,44 @@ namespace SocialMedia.Controllers
         {
             return await _userService.UserExists(id);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangeProfilePicture(IFormFile profilePicture)
+        {
+            if (profilePicture == null || profilePicture.Length == 0)
+            {
+                // Handle no file uploaded scenario
+                return RedirectToAction("Error");
+            }
+
+            // Example: Save image to database
+            var user = await _userManager.GetUserAsync(User);
+            if (user != null)
+            {
+                // Assuming Image model and context are correctly set up
+                var image = new Image
+                {
+                    FileName = profilePicture.FileName,
+                    ContentType = profilePicture.ContentType,
+                    UserId = user.Id,
+                    UploadDate = DateTime.UtcNow
+                };
+
+                using (var memoryStream = new MemoryStream())
+                {
+                    await profilePicture.CopyToAsync(memoryStream);
+                    image.Data = memoryStream.ToArray();
+                }
+
+                _context.Images.Add(image);
+                await _context.SaveChangesAsync();
+
+                user.ProfilePicture = image;
+                await _userManager.UpdateAsync(user);
+            }
+
+            return RedirectToAction("Details", new { id = user.Id });
+        }
+
     }
 }

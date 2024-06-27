@@ -7,28 +7,56 @@
     var followUrl = Url.Action("Follow", "Users");
     var unfollowUrl = Url.Action("Unfollow", "Users");
 }
+
 @using Microsoft.AspNetCore.Identity
 @inject UserManager<User> UserManager
+
 <div class="container">
     <div class="text-center mb-4">
         <div class="d-flex align-items-center profile-ribbon" style="background-color: rgb(33, 66, 95); padding: 10px; border-radius: 5px;">
             <div class="profile-photo">
-                <img src="~/assets/doeland.png" class="rounded-circle" width="100" height="100" alt="@Model.FullName" />
+                @if (Model.Id == UserManager.GetUserId(User))
+                {
+                    <form method="post" enctype="multipart/form-data" action="/Users/ChangeProfilePicture">
+                        <label for="profilePictureInput" style="cursor: pointer;">
+                            @if (Model.ProfilePicture != null)
+                            {
+                                <img src="data:@Model.ProfilePicture.ContentType;base64,@Convert.ToBase64String(Model.ProfilePicture.Data)" class="rounded-circle" width="100" height="100" alt="@Model.FullName" />
+                            }
+                            else
+                            {
+                                <img src="/assets/images/default.png" class="rounded-circle" width="100" height="100" alt="Default Profile Picture" />
+                            }
+                        </label>
+                        <input type="file" id="profilePictureInput" name="profilePicture" style="display: none;" onchange="this.form.submit();" />
+                        <input name="__RequestVerificationToken" type="hidden" value='@Html.AntiForgeryToken()' />
+                    </form>
+                }
+                else
+                {
+                    @if (Model.ProfilePicture != null)
+                    {
+                        <img src="data:@Model.ProfilePicture.ContentType;base64,@Convert.ToBase64String(Model.ProfilePicture.Data)" class="rounded-circle" width="100" height="100" alt="@Model.FullName" />
+                    }
+                    else
+                    {
+                        <img src="/assets/images/default.png" class="rounded-circle" width="100" height="100" alt="Default Profile Picture" />
+                    }
+                }
             </div>
+
+
             <div class="ms-3" style="color: white;">
                 <h2>@Model.FullName</h2>
             </div>
         </div>
     </div>
-        
+
     <div class="mb-3">
         <a class="btn btn-primary" asp-controller="Posts" asp-action="Create">Create New Post</a>
     </div>
 
-
-
     <div class="mb-3">
-
         @if (Model.Id != @UserManager.GetUserId(User))
         {
             if (Model.Followers.Any(f => f.UserId == @UserManager.GetUserId(User)))
@@ -40,8 +68,6 @@
                 <button type="button" class="btn btn-success" data-user-id="@Model.Id" onclick="followUser('@Model.Id', '@followUrl')">Follow</button>
             }
         }
-        
-
     </div>
 
     <div class="mb-3">
@@ -49,9 +75,6 @@
             Followers (<span id="followers-count">@Model.Followers.Count</span>)
         </a>
     </div>
-
-
-
 
     @if (Model.Posts != null && Model.Posts.Any())
     {
@@ -85,7 +108,6 @@
                         }
                     </div>
 
-
                     @if (post.Comments != null && post.Comments.Any())
                     {
                         var firstComment = post.Comments.OrderBy(c => c.CreationDate).FirstOrDefault();
@@ -104,12 +126,13 @@
                             </div>
                         }
                     }
-
                 </div>
             </div>
         }
     }
-    @section Scripts{
-        <script src="~/js/PostLikeDislike.js"></script>
-        <script src="~/js/UserInterraction.js"></script>
-    }
+</div>
+
+@section Scripts {
+    <script src="~/js/PostLikeDislike.js"></script>
+    <script src="~/js/UserInterraction.js"></script>
+}

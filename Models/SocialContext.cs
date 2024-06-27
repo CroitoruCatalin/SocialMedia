@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Drawing;
+using System.Reflection.Emit;
 
 namespace SocialMedia.Models
 {
@@ -13,6 +15,7 @@ namespace SocialMedia.Models
         public DbSet<PostLike> PostLikes { get; set; }
         public DbSet<CommentLike> CommentLikes { get; set; }
         public DbSet<UserUser> UserUsers { get; set; }
+        public DbSet<Image> Images { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -33,6 +36,18 @@ namespace SocialMedia.Models
                 .WithMany(u => u.Followers)
                 .HasForeignKey(uu => uu.FriendId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<User>()
+                .HasOne(u => u.ProfilePicture)
+                .WithOne(i => i.User)
+                .HasForeignKey<Image>(i => i.UserId)
+                .IsRequired(false); // If ProfilePictureId in User is nullable
+
+            builder.Entity<Image>()
+                .HasOne(i => i.User)
+                .WithOne(u => u.ProfilePicture)
+                .HasForeignKey<User>(u => u.ProfilePictureId)
+                .IsRequired(false); // If UserId in Image is nullable
         }
     }
 }

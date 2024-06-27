@@ -53,6 +53,7 @@ builder.Services.AddScoped<ICommentService, CommentService>();
 builder.Services.AddScoped<IPostLikeService, PostLikeService>();
 builder.Services.AddScoped<IRepositoryWrapper, RepositoryWrapper>();
 builder.Services.AddScoped<AuthenticationService>();
+builder.Services.AddScoped<ImageService>();
 
 var app = builder.Build();
 

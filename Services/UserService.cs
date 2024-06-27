@@ -137,6 +137,7 @@ namespace SocialMedia.Services
         {
             return await _repositoryWrapper.UserRepository
                 .FindByCondition(u => u.Id == userId)
+                .Include(u => u.ProfilePicture)
                 .Include(u => u.Posts)
                     .ThenInclude(p => p.Likes)
                 .Include(u => u.Posts)
