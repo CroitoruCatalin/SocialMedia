@@ -1,0 +1,36 @@
+﻿
+.register-container {
+    background-color: aliceblue;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+.register-title {
+    background-color: aliceblue;
+    border-radius: 10px;
+    justify-content: left;
+    padding-left: 15px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.form-floating {
+    margin-bottom: 1rem;
+}
+
+.btn-primary {
+    background-color: blue;
+    border-color: blue;
+}
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+    }
+
+.text-center {
+    text-align: center;
+}
