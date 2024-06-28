@@ -247,5 +247,29 @@ namespace SocialMedia.Controllers
             return RedirectToAction("Details", new { id = user.Id });
         }
 
+
+        [HttpGet]
+        public async Task<IActionResult> Search(string searchTerm)
+        {
+            if (string.IsNullOrWhiteSpace(searchTerm))
+            {
+                return BadRequest("Search term cannot be empty.");
+            }
+
+            var users = await _userService.SearchUsersAsync(searchTerm, 4);
+            var results = users.Select(u => new UserSearchResultViewModel
+            {
+                Id = u.Id,
+                FullName = u.FullName,
+                ProfilePicture = u.ProfilePicture != null ? new ImageViewModel
+                {
+                    ContentType = u.ProfilePicture.ContentType,
+                    Data = Convert.ToBase64String(u.ProfilePicture.Data)
+                } : null
+            }).ToList();
+
+            return Json(results);
+
+        }
     }
 }

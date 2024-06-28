@@ -36,5 +36,15 @@ namespace SocialMedia.Repositories
                 .ToListAsync();
         }
 
+        public async Task<List<User>> SearchUsersAsync(string searchTerm, int maxResults = 10)
+        {
+            return await _context
+                .Users
+                .Where(u => u.FullName.Contains(searchTerm))
+                .Include(u => u.ProfilePicture)
+                .Take(maxResults)
+                .ToListAsync();
+        }
+
     }
 }

@@ -7,5 +7,6 @@ namespace SocialMedia.Repositories.Interfaces
         Task FollowUser(UserUser userUser);
         Task UnfollowUser(UserUser userUser);
         Task<List<User>> GetFollowers(string userId);
+        Task<List<User>> SearchUsersAsync(string searchTerm, int maxResults = 10);
     }
 }
