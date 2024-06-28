@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="~/SocialMedia.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/topnav.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/Post.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/UserSearch.css" asp-append-version="true" />
 </head>
 <body>
 
@@ -20,16 +21,22 @@
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                <div class="collapse navbar-collapse">
+
+                    <!-- Left aligned -->
+                    <ul class="navbar-nav me-auto">
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                     </ul>
+
+                    <!-- Center aligned -->
+                    <div class="mx-auto">
+                        <partial name="_UserSearch" />
+                    </div>
+
+                    <!-- Right Aligned -->
                     <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Users" asp-action="Browse">Browse Users</a>
-                        </li>
                         @if (User.Identity.IsAuthenticated)
                         {
                         @using Microsoft.AspNetCore.Identity
@@ -61,6 +68,7 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/UserSearch.js" append-version="true"></script>
     
     @await RenderSectionAsync("Scripts", required: false)
 

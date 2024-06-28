@@ -1,0 +1,18 @@
+﻿.search-input{
+    width: 300px;
+}
+
+
+
+.dropdown-item {
+    cursor: pointer;
+}
+
+.dropdown-user-search-results{
+    margin-top: 1px;
+    width: 300px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    box-shadow: 0px 8px 16px rgba(0,0,0,0.1);
+}
+

@@ -146,5 +146,11 @@ namespace SocialMedia.Services
                 .Include(u => u.Followers)
                 .FirstOrDefaultAsync();
         }
+
+        public async Task<List<User>> SearchUsersAsync(string searchTerm, int maxResults = 10)
+        {
+            return await _repositoryWrapper
+                .UserRepository.SearchUsersAsync(searchTerm, maxResults);
+        }
     }
 }

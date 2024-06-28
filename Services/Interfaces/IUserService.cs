@@ -18,5 +18,7 @@ namespace SocialMedia.Services.Interfaces
         Task<IEnumerable<UserViewModel>> GetFollowers(string userId);
         Task<bool> IsFollowing(string userId, string followUserId);
         Task<User?> GetUserByIdWithPostsAndFollowers(string userId);
+
+        Task<List<User>> SearchUsersAsync(string searchTerm, int maxResults = 10);
     }
 }
