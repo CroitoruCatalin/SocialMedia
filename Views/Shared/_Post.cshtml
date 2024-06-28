@@ -1,17 +1,37 @@
 ﻿@model SocialMedia.Models.Post
 @inject Microsoft.AspNetCore.Mvc.IUrlHelper Url
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<User> UserManager
 
-<div class="card mb-3">
-    <div class="card-header">
-        <strong>
-            <a asp-controller="Users" asp-action="Details" asp-route-id="@Model.User.Id">
-                @Model.User.FullName
-            </a>
-        </strong>
-        <span class="float-end text-muted">@Model.CreationDate</span>
+<div class="card mb-3 post-card border-0">
+    <div class="card-header post-card-header bg-white">
+        <div class="d-flex align-items-center">
+            <div class="post-profile-div p-2">
+                <a asp-controller="Users" asp-action="Details" asp-route-id="@Model.User.Id" class="text-decoration-none text-dark">
+                    @if (Model.User.ProfilePicture != null)
+                    {
+                        <img src="data:@Model.User.ProfilePicture.ContentType;base64,@Convert.ToBase64String(Model.User.ProfilePicture.Data)" class="rounded-circle" alt="@Model.User.FullName" />
+                    }
+                    else
+                    {
+                        <img src="/assets/images/default.png" class="rounded-circle" alt="Default Profile Picture" />
+                    }
+                </a>
+            </div>
+            <div class="post-username p-2">
+                <strong>
+                    <a asp-controller="Users" asp-action="Details" asp-route-id="@Model.User.Id" class="text-decoration-none text-dark">
+                        @Model.User.FullName
+                    </a>
+                </strong>
+            </div>
+            <div class="ml-auto p-2 text-muted">
+                @Model.CreationDate
+            </div>
+        </div>
     </div>
     <div class="card-body">
-        <p>@Model.Content</p>
+        <p class="card-text">@Model.Content</p>
         <a class="btn btn-link" asp-controller="Posts" asp-action="Details" asp-route-id="@Model.PostID">View Details</a>
         <div class="d-flex justify-content-end">
             @if (Model.Likes != null)

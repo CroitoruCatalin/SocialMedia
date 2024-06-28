@@ -1,0 +1,61 @@
+﻿
+.card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #ddd;
+}
+
+.card-body {
+    padding: 1.5rem; 
+}
+
+.card-text {
+    line-height: 1.6;
+}
+
+.btn-group {
+    margin-bottom: 0.5rem;
+}
+
+
+.card-body .border-top {
+    padding-top: 1rem;
+}
+
+
+.post-profile-div img{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.post-username{
+    margin-left: 2px;
+}
+
+.ml-auto{
+    margin-left: auto;
+}
+
+.text-muted{
+    font-size: 0.875rem;
+}
+
+.post-card-header {
+    background-color: #f8f9fa;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom: 1px solid #ddd;
+}
+
+
+.post-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
