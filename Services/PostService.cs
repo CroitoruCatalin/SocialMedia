@@ -50,6 +50,7 @@ namespace SocialMedia.Services
                  .PostRepository
                  .FindAll()
                  .Include(p => p.User)
+                    .ThenInclude(u => u.ProfilePicture)
                  .Include(p => p.Comments)
                  .ThenInclude(c => c.User)
                  .Include(p => p.Likes);

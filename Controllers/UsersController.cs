@@ -212,17 +212,17 @@ namespace SocialMedia.Controllers
         [HttpPost]
         public async Task<IActionResult> ChangeProfilePicture(IFormFile profilePicture)
         {
+            //todo: add error for filesize too big
             if (profilePicture == null || profilePicture.Length == 0)
             {
-                // Handle no file uploaded scenario
                 return RedirectToAction("Error");
             }
 
-            // Example: Save image to database
+            //todo: check if file already exists in the database
+
             var user = await _userManager.GetUserAsync(User);
             if (user != null)
             {
-                // Assuming Image model and context are correctly set up
                 var image = new Image
                 {
                     FileName = profilePicture.FileName,
