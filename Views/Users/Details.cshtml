@@ -80,54 +80,7 @@
     {
         @foreach (var post in Model.Posts.OrderByDescending(p => p.CreationDate))
         {
-            var likeCount = post.Likes?.Count(l => l.LikeValue) ?? 0;
-            var dislikeCount = post.Likes?.Count(l => !l.LikeValue) ?? 0;
-
-            <div class="card mb-3">
-                <div class="card-header">
-                    <strong>@post.User?.FullName</strong>
-                    <span class="float-end text-muted">@post.CreationDate</span>
-                </div>
-                <div class="card-body">
-                    <p>@post.Content</p>
-
-                    <a class="btn btn-link" asp-controller="Posts" asp-action="Details" asp-route-id="@post.PostID">View Details</a>
-
-                    <div class="d-flex justify-content-end">
-                        @if (post.Likes != null)
-                        {
-                            <div class="d-flex align-items-center">
-                                <button type="button" class="btn btn-light me-3" onclick="likePost(@post.PostID, '@likeUrl')">
-                                    👍 <span id="like-count-@post.PostID">@likeCount</span>
-                                </button>
-
-                                <button type="button" class="btn btn-light" onclick="dislikePost(@post.PostID, '@dislikeUrl')">
-                                    👎 <span id="dislike-count-@post.PostID">@dislikeCount</span>
-                                </button>
-                            </div>
-                        }
-                    </div>
-
-                    @if (post.Comments != null && post.Comments.Any())
-                    {
-                        var firstComment = post.Comments.OrderBy(c => c.CreationDate).FirstOrDefault();
-
-                        if (firstComment != null && firstComment.User != null)
-                        {
-                            <div class="mt-3 border-top pt-2">
-                                <strong>@firstComment.User.FullName:</strong>
-                                <span>@firstComment.Message</span>
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="mt-3 border-top pt-2">
-                                <span>No comments available.</span>
-                            </div>
-                        }
-                    }
-                </div>
-            </div>
+            <partial name="_Post" model="post" />
         }
     }
 </div>
