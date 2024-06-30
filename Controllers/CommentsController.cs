@@ -66,7 +66,7 @@ namespace SocialMedia.Controllers
             {
                 //comment.UserID = _userManager.GetUserId(User);
                 comment.UserID = _userManager.GetUserId(User);
-                comment.CreationDate = DateTime.Now;
+                comment.CreationDate = DateTime.UtcNow;
                 await _commentService.CreateComment(comment);
                 return RedirectToAction("Details", "Posts", new { id = comment.PostID });
             }
