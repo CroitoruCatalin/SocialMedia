@@ -17,8 +17,10 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<SocialContext>();
-builder.Services.AddDbContext<SocialContext>( options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SocialDb")));
+
+// Configure Entity Framework Core to use Npgsql for PostgreSQL
+builder.Services.AddDbContext<SocialContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("SocialDb")));
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
@@ -57,14 +59,27 @@ builder.Services.AddScoped<ImageService>();
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        await DbInitializer.Initialize(services);
+    } catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred seeding the DB.");
+    }
+}
+
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-    
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 

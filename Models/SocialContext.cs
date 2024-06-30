@@ -48,6 +48,12 @@ namespace SocialMedia.Models
                 .WithOne(u => u.ProfilePicture)
                 .HasForeignKey<User>(u => u.ProfilePictureId)
                 .IsRequired(false); // If UserId in Image is nullable
+
+            builder.Entity<Post>()
+                .HasOne(p => p.User)
+                .WithMany(u => u.Posts)
+                .HasForeignKey(p => p.UserID)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
