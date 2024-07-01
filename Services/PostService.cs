@@ -46,16 +46,36 @@ namespace SocialMedia.Services
 
         public List<Post> GetAllPosts()
         {
-            var posts = _repositoryWrapper
-                 .PostRepository
-                 .FindAll()
-                 .Include(p => p.User)
-                    .ThenInclude(u => u.ProfilePicture)
-                 .Include(p => p.Comments)
-                 .ThenInclude(c => c.User)
-                 .Include(p => p.Likes);
+            int pageNumber = 1;
+            int pageSize = 20;
 
-            return posts.ToList();
+            return _repositoryWrapper
+                .PostRepository
+                .FindAll()
+                .Include(p => p.User)
+                    .ThenInclude(u => u.ProfilePicture)
+                .Include(p => p.Comments)
+                    .ThenInclude(c => c.User)
+                .Include(p => p.Likes)
+                .OrderByDescending(p => p.CreationDate)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+        }
+
+        public async Task<List<Post>> GetAllPostsAsync()
+        {
+            return await _repositoryWrapper
+                .PostRepository
+                .FindAll()
+                .OrderByDescending(p => p.CreationDate)
+                .Include(p => p.User)
+                    .ThenInclude(u => u.ProfilePicture)
+                .Include(p => p.Comments.OrderByDescending(c => c.CreationDate).Take(1)) // Only fetch the most recent comment
+                    .ThenInclude(c => c.User)
+                .Include(p => p.Likes)
+                .Take(20)
+                .ToListAsync();
         }
 
         public Post GetPostWithComments(int postId)

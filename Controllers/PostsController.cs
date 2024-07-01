@@ -35,7 +35,7 @@ namespace SocialMedia.Controllers
             //var socialContext = _context.Posts.Include(p => p.User);
             //return View(await socialContext.ToListAsync());
 
-            return View(_postService.GetAllPosts());
+            return View(await _postService.GetAllPostsAsync());
         }
 
         // GET: Posts/Details/5

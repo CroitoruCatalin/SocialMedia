@@ -7,6 +7,7 @@ namespace SocialMedia.Services.Interfaces
     {
         Task<Post?> GetPostById(int postId);
         List<Post> GetAllPosts();
+        Task<List<Post>> GetAllPostsAsync();
         Task CreatePost(Post post, ClaimsPrincipal userPrincipal);
         Task UpdatePost(Post post);
         Task DeletePost(int postId);

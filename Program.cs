@@ -20,7 +20,8 @@ builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfi
 
 // Configure Entity Framework Core to use Npgsql for PostgreSQL
 builder.Services.AddDbContext<SocialContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("SocialDb")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("SocialDb"))
+    .LogTo(Console.WriteLine, LogLevel.Information));
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
