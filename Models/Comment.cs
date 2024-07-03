@@ -1,13 +1,15 @@
-﻿namespace SocialMedia.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace SocialMedia.Models
 {
-    public class Comment
+    public class Comment : ContentBase 
     {
-        public int CommentID {  get; set; }
-        public string? Message { get; set; }
-        public string? UserID {get; set; }
-        public User? User { get; set; }
-        public int PostID { get; set; }
-        public DateTime CreationDate { get; set; }
-        public ICollection<CommentLike>? Likes { get; set; }
+        [MinLength(5, ErrorMessage = "Comments must contain at least 5 characters.")]
+        [StringLength(140, ErrorMessage = "Comments can only contain up to 140 characters.")]
+        public override string Message { get; set; }
+
+        //parent post
+        public int PostID {  get; set; }
+        public Post Post {  get; set; }
     }
 }

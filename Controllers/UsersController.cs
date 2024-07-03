@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using SocialMedia.Models;
 using SocialMedia.Services.Interfaces;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using SocialMedia.Models.ViewModels;
 
 namespace SocialMedia.Controllers
 {

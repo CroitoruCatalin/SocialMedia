@@ -12,8 +12,7 @@ namespace SocialMedia.Models
 
         public DbSet<Post> Posts { get; set; }
         public DbSet<Comment> Comments { get; set; }
-        public DbSet<PostLike> PostLikes { get; set; }
-        public DbSet<CommentLike> CommentLikes { get; set; }
+        public DbSet<Reaction> Reactions { get; set; }
         public DbSet<UserUser> UserUsers { get; set; }
         public DbSet<Image> Images { get; set; }
 
@@ -53,6 +52,12 @@ namespace SocialMedia.Models
                 .HasOne(p => p.User)
                 .WithMany(u => u.Posts)
                 .HasForeignKey(p => p.UserID)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<Comment>()
+                .HasOne(c => c.Post)
+                .WithMany(p => p.Comments)
+                .HasForeignKey(c => c.PostID)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

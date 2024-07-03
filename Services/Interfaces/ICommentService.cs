@@ -4,11 +4,11 @@ namespace SocialMedia.Services.Interfaces
 {
     public interface ICommentService
     {
-        Task<Comment?> GetCommentById(int commentId);
-        Task<IEnumerable<Comment>> GetAllComments();
-        Task CreateComment(Comment comment);
-        Task UpdateComment(Comment comment);
-        Task DeleteComment(int commentId);
+        Task<Comment> GetCommentByIdAsync(int commentId);
+        Task<IEnumerable<Comment>> GetCommentsByPostIdAsync(int postId);
+        Task CreateCommentAsync(Comment comment);
+        Task UpdateCommentAsync(Comment comment);
+        Task DeleteCommentAsync(int commentId);
         Task<bool> CommentExists(int commentId);
     }
 }

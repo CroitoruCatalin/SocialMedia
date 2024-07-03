@@ -31,20 +31,20 @@
         </div>
     </div>
     <div class="card-body">
-        <p class="card-text">@Model.Content</p>
-        <a class="btn btn-link" asp-controller="Posts" asp-action="Details" asp-route-id="@Model.PostID">View Details</a>
+        <p class="card-text">@Model.Message</p>
+        <a class="btn btn-link" asp-controller="Posts" asp-action="Details" asp-route-id="@Model.ID">View Details</a>
         <div class="d-flex justify-content-end">
-            @if (Model.Likes != null)
+            @if (Model.Reactions != null)
             {
-                var likeCount = Model.Likes.Count(l => l.LikeValue == true);
-                var dislikeCount = Model.Likes.Count(l => l.LikeValue == false);
+                var likeCount = Model.LikeCount;
+                var dislikeCount = Model.DislikeCount;
                 <div class="d-flex align-items-center">
-                    <button type="button" class="btn btn-light me-3" onclick="likePost(@Model.PostID, '@(Url.Action("Like", "PostLikes"))')">
-                        👍 <span id="like-count-@Model.PostID">@likeCount</span>
+                    <button type="button" class="btn btn-light me-3" onclick="likePost(@Model.ID, '@(Url.Action("Like", "Reactions"))')">
+                        👍 <span id="like-count-@Model.ID">@likeCount</span>
                     </button>
 
-                    <button type="button" class="btn btn-light" onclick="dislikePost(@Model.PostID, '@(Url.Action("Dislike", "PostLikes"))')">
-                        👎 <span id="dislike-count-@Model.PostID">@dislikeCount</span>
+                    <button type="button" class="btn btn-light" onclick="dislikePost(@Model.ID, '@(Url.Action("Dislike", "Reactions"))')">
+                        👎 <span id="dislike-count-@Model.ID">@dislikeCount</span>
                     </button>
                 </div>
             }

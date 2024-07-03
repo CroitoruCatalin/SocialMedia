@@ -25,13 +25,7 @@ namespace SocialMedia.Controllers
             _userManager = userManager;
         }
 
-        // GET: Comments
-        [Authorize(Roles = "admin")]
-        public async Task<IActionResult> Index()
-        {
-            return View(await _commentService.GetAllComments());
-        }
-
+        
         // GET: Comments/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -40,7 +34,7 @@ namespace SocialMedia.Controllers
                 return NotFound();
             }
 
-            var comment = await _commentService.GetCommentById(id.Value);
+            var comment = await _commentService.GetCommentByIdAsync(id.Value);
             if (comment == null)
             {
                 return NotFound();
@@ -67,7 +61,7 @@ namespace SocialMedia.Controllers
                 //comment.UserID = _userManager.GetUserId(User);
                 comment.UserID = _userManager.GetUserId(User);
                 comment.CreationDate = DateTime.UtcNow;
-                await _commentService.CreateComment(comment);
+                await _commentService.CreateCommentAsync(comment);
                 return RedirectToAction("Details", "Posts", new { id = comment.PostID });
             }
             else
@@ -103,7 +97,7 @@ namespace SocialMedia.Controllers
                 return NotFound();
             }
             
-            var comment = await _commentService.GetCommentById(id.Value);
+            var comment = await _commentService.GetCommentByIdAsync(id.Value);
             if (comment == null)
             {
                 return NotFound();
@@ -124,14 +118,14 @@ namespace SocialMedia.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("CommentID,Message,PostID")] Comment comment)
         {
-            if (id != comment.CommentID)
+            if (id != comment.ID)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
-                var existingComment = await _commentService.GetCommentById(id);
+                var existingComment = await _commentService.GetCommentByIdAsync(id);
                 if(existingComment == null || existingComment.UserID != _userManager.GetUserId(User))
                 {
                     return Forbid();
@@ -142,7 +136,7 @@ namespace SocialMedia.Controllers
 
 
 
-                await _commentService.UpdateComment(existingComment);
+                await _commentService.UpdateCommentAsync(existingComment);
                 return RedirectToAction("Details", "Posts", new { id = comment.PostID });
             }
             return View(comment);
@@ -156,7 +150,7 @@ namespace SocialMedia.Controllers
                 return NotFound();
             }
 
-            var comment = await _commentService.GetCommentById(id.Value);
+            var comment = await _commentService.GetCommentByIdAsync(id.Value);
             if (comment == null)
             {
                 return NotFound();
@@ -172,10 +166,10 @@ namespace SocialMedia.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var comment = await _commentService.GetCommentById(id);
+            var comment = await _commentService.GetCommentByIdAsync(id);
             if(comment != null && comment.UserID == _userManager.GetUserId(User))
             {
-                await _commentService.DeleteComment(id);
+                await _commentService.DeleteCommentAsync(id);
             }
             return RedirectToAction("Details", "Posts", new { id = comment?.PostID });
         }
