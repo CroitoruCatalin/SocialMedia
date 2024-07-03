@@ -30,12 +30,25 @@ namespace SocialMedia.Controllers
         }
 
         // GET: Posts
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
-            //var socialContext = _context.Posts.Include(p => p.User);
-            //return View(await socialContext.ToListAsync());
+            var userId = _userManager.GetUserId(User);
+            //var postIds = await _postService.GetPostRecommendationsAsync(userId);
+            var postIds = await _postService.RecommendationAlgorithm(userId);
 
-            return View(await _postService.GetAllPostsAsync());
+            return View(postIds);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetPostDetails(int id)
+        {
+            Post post = _postService.GetPostWithCommentsAsync(id);
+            if (post == null)
+            {
+                return NotFound();
+            }
+            return PartialView("_Post", post);
         }
 
         // GET: Posts/Details/5
@@ -46,7 +59,7 @@ namespace SocialMedia.Controllers
                 return NotFound();
             }
 
-            var post = _postService.GetPostWithComments((int)id);
+            var post = _postService.GetPostWithCommentsAsync((int)id);
 
             if (post == null)
             {

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SocialMedia.Models;
+using SocialMedia.Models.ViewModels;
 using SocialMedia.Repositories;
 using SocialMedia.Repositories.Interfaces;
 using SocialMedia.Services.Interfaces;
@@ -85,12 +86,13 @@ namespace SocialMedia.Services
                 .ToListAsync();
         }
 
-        public Post GetPostWithComments(int postId)
+        public Post GetPostWithCommentsAsync(int postId)
         {
             var postQuery = _repositoryWrapper
                 .PostRepository
                 .FindByCondition(p => p.ID == postId)
                 .Include(p => p.User)
+                .ThenInclude(u => u.ProfilePicture)
                 .Include(p => p.Comments)
                 .ThenInclude(c => c.User)
                 .Include(p => p.Comments)
@@ -116,6 +118,40 @@ namespace SocialMedia.Services
         {
             return await _repositoryWrapper.PostRepository
                 .GetPostByIdAsync(postId);
+        }
+
+        public async Task<IEnumerable<int>> GetPostRecommendationsAsync(string userId)
+        {
+            return await _context.Posts
+                .OrderByDescending(p => p.ModifiedDate)
+                .Select(p => p.ID)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<int>> RecommendationAlgorithm(string userId)
+        {
+            var followingIds = await _context.UserUsers
+                .Where(uu => uu.UserId == userId)
+                .Select(uu => uu.FriendId)
+                .ToListAsync();
+
+            var recommendations = await _context.Posts
+                .Include(p => p.Reactions)
+                .Include(p => p.User)
+                .Select(p => new
+                {
+                    PostId = p.ID,
+                    IsFromFollowedUser = followingIds.Contains(p.UserID),
+                    LikeCount = p.LikeCount,
+                    CreationDate = p.CreationDate
+                })
+                .OrderByDescending(p => p.IsFromFollowedUser)
+                .ThenByDescending(p => p.LikeCount)
+                .ThenByDescending(p => p.CreationDate)
+                .Select(p => p.PostId)
+                .ToListAsync();
+
+            return recommendations;
         }
     }
 }
