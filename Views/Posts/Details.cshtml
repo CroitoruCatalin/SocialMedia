@@ -14,9 +14,9 @@
             <span class="float-end text-muted">@Model.CreationDate</span>
         </div>
         <div class="card-body">
-            <p>@Model.Content</p>
+            <p>@Model.Message</p>
             <div class="d-flex justify-content-between mt-3">
-                <a class="btn btn-success" asp-controller="Comments" asp-action="Create" asp-route-postId="@Model.PostID">Add Comment</a>
+                <a class="btn btn-success" asp-controller="Comments" asp-action="Create" asp-route-postId="@Model.ID">Add Comment</a>
             </div>
             @if (Model.Comments != null && Model.Comments.Any())
             {
@@ -28,8 +28,8 @@
                         @if (currentUserId == comment.UserID)
                         {
                             <div class="d-flex justify-content-end mt-2">
-                                <a class="btn btn-primary btn-sm bi bi-pen mx-1" asp-controller="Comments" asp-action="Edit" asp-route-id="@comment.CommentID">Edit</a>
-                                <a class="btn btn-danger btn-sm bi bi-trash mx-1" asp-controller="Comments" asp-action="Delete" asp-route-id="@comment.CommentID">Delete</a>
+                                <a class="btn btn-primary btn-sm bi bi-pen mx-1" asp-controller="Comments" asp-action="Edit" asp-route-id="@comment.ID">Edit</a>
+                                <a class="btn btn-danger btn-sm bi bi-trash mx-1" asp-controller="Comments" asp-action="Delete" asp-route-id="@comment.ID">Delete</a>
                             </div>
                         }
                     </div>
@@ -45,8 +45,8 @@
             @if(currentUserId == Model.UserID)
             {
                 <div class="d-flex justify-content-end mt-3">
-                    <a class="btn btn-primary mx-1" asp-action="Edit" asp-route-id="@Model?.PostID">Edit</a>
-                    <a class="btn btn-danger mx-1" asp-action="Delete" asp-route-id="@Model?.PostID">Delete</a>
+                    <a class="btn btn-primary mx-1" asp-action="Edit" asp-route-id="@Model?.ID">Edit</a>
+                    <a class="btn btn-danger mx-1" asp-action="Delete" asp-route-id="@Model?.ID">Delete</a>
                 </div>
             }
 

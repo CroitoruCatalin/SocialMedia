@@ -9,8 +9,7 @@ namespace SocialMedia.Repositories
         public IUserRepository? _userRepository;
         public IPostRepository? _postRepository;
         public ICommentRepository? _commentRepository;
-        public IPostLikeRepository? _postLikeRepository;
-        public ICommentLikeRepository? _commentLikeRepository;
+        public IReactionRepository? _reactionRepository;
         public RepositoryWrapper(SocialContext socialContext)
         {
             _socialContext = socialContext;
@@ -55,29 +54,16 @@ namespace SocialMedia.Repositories
             }
         }
 
-        public IPostLikeRepository PostLikeRepository
+        public IReactionRepository ReactionRepository
         {
             get
             {
-                if (_postLikeRepository == null)
+                if (_reactionRepository == null)
                 {
-                    _postLikeRepository = new PostLikeRepository(_socialContext);
+                    _reactionRepository = new ReactionRepository(_socialContext);
                 }
 
-                return _postLikeRepository;
-            }
-        }
-
-        public ICommentLikeRepository CommentLikeRepository
-        {
-            get
-            {
-                if (_commentLikeRepository == null)
-                {
-                    _commentLikeRepository = new CommentLikeRepository(_socialContext);
-                }
-
-                return _commentLikeRepository;
+                return _reactionRepository;
             }
         }
 

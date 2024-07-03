@@ -14,10 +14,10 @@ namespace SocialMedia.Services
             _repositoryWrapper = repositoryWrapper;
         }
 
-        public async Task<Comment?> GetCommentById(int commentId)
+        public async Task<Comment?> GetCommentByIdAsync(int commentId)
         {
             return await _repositoryWrapper.CommentRepository
-                .FindByCondition(c => c.CommentID == commentId)
+                .FindByCondition(c => c.ID == commentId)
                 .FirstOrDefaultAsync();
         }
 
@@ -29,22 +29,22 @@ namespace SocialMedia.Services
                 .ToListAsync();
         }
 
-        public async Task CreateComment(Comment comment)
+        public async Task CreateCommentAsync(Comment comment)
         {
             _repositoryWrapper.CommentRepository.Create(comment);
             await _repositoryWrapper.SaveAsync();
         }
 
-        public async Task UpdateComment(Comment comment)
+        public async Task UpdateCommentAsync(Comment comment)
         {
             _repositoryWrapper.CommentRepository.Update(comment);
             await _repositoryWrapper.SaveAsync();
         }
 
-        public async Task DeleteComment(int commentId)
+        public async Task DeleteCommentAsync(int commentId)
         {
             var comment = await _repositoryWrapper.CommentRepository
-                .FindByCondition(c => c.CommentID == commentId)
+                .FindByCondition(c => c.ID == commentId)
                 .FirstOrDefaultAsync();
 
             if (comment != null)
@@ -56,7 +56,13 @@ namespace SocialMedia.Services
         public async Task<bool> CommentExists(int id)
         {
             return await _repositoryWrapper.CommentRepository
-                .FindByCondition(c => c.CommentID == id).AnyAsync();
+                .FindByCondition(c => c.ID == id).AnyAsync();
+        }
+
+        public async Task<IEnumerable<Comment>> GetCommentsByPostIdAsync(int postId)
+        {
+            return await _repositoryWrapper.CommentRepository
+                .GetCommentsByPostIdAsync(postId);
         }
     }
 }

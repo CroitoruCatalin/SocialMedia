@@ -2,6 +2,7 @@
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using SocialMedia.Models;
+using SocialMedia.Models.ViewModels;
 using SocialMedia.Repositories.Interfaces;
 using SocialMedia.Services.Interfaces;
 
@@ -28,7 +29,7 @@ namespace SocialMedia.Services
             return await _repositoryWrapper.UserRepository
                 .FindByCondition(u => u.Id == userId)
                 .Include(u => u.Posts)
-                .ThenInclude(p => p.Likes)
+                .ThenInclude(p => p.Reactions)
                 .Include(u => u.Posts)
                 .ThenInclude(p => p.Comments)
                 .ThenInclude(c=>c.User)
@@ -139,7 +140,7 @@ namespace SocialMedia.Services
                 .FindByCondition(u => u.Id == userId)
                 .Include(u => u.ProfilePicture)
                 .Include(u => u.Posts)
-                    .ThenInclude(p => p.Likes)
+                    .ThenInclude(p => p.Reactions)
                 .Include(u => u.Posts)
                     .ThenInclude(p => p.Comments)
                         .ThenInclude(c => c.User)

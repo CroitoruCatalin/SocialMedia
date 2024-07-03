@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SocialMedia.Models;
 using System.Diagnostics;
+using SocialMedia.Models.ViewModels;
 
 namespace SocialMedia.Controllers
 {

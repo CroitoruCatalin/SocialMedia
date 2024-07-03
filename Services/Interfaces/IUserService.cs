@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SocialMedia.Models;
+using SocialMedia.Models.ViewModels;
 
 namespace SocialMedia.Services.Interfaces
 {

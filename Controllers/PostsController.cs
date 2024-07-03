@@ -69,10 +69,21 @@ namespace SocialMedia.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Post post)
         {
-            if (ModelState.IsValid)
+            var userId = _userManager.GetUserId(User);
+            if (ModelState.IsValid && userId != null)
             {
-                await _postService.CreatePost(post, User);
+                await _postService.CreatePostAsync(post, User);
                 return RedirectToAction(nameof(Index));
+            }
+
+            foreach (var modelState in ModelState)
+            {
+                var key = modelState.Key;
+                var errors = modelState.Value.Errors;
+                foreach (var error in errors)
+                {
+                    Console.WriteLine($"Key: {key}, Error: {error.ErrorMessage}");
+                }
             }
             return View(post);
         }
@@ -94,7 +105,7 @@ namespace SocialMedia.Controllers
                 return NotFound();
             }
 
-            var post = await _postService.GetPostById(id.Value);
+            var post = await _postService.GetPostByIdAsync(id.Value);
             if (post == null)
             {
                 return NotFound();
@@ -113,7 +124,7 @@ namespace SocialMedia.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("PostID,Content,UserID")] Post post)
         {
-            if (id != post.PostID)
+            if (id != post.ID)
             {
                 return NotFound();
             }
@@ -123,7 +134,7 @@ namespace SocialMedia.Controllers
 
             if (ModelState.IsValid)
             {
-                await _postService.UpdatePost(post);
+                await _postService.UpdatePostAsync(post);
                 return RedirectToAction(nameof(Index));
             }
 
@@ -138,7 +149,7 @@ namespace SocialMedia.Controllers
                 return NotFound();
             }
 
-            var post = await _postService.GetPostById(id.Value);
+            var post = await _postService.GetPostByIdAsync(id.Value);
             if (post == null)
             {
                 return NotFound();
@@ -156,13 +167,13 @@ namespace SocialMedia.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _postService.DeletePost(id);
+            await _postService.DeletePostAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
         private bool PostExists(int id)
         {
-            return _postService.GetPostById(id) != null ;
+            return _postService.GetPostByIdAsync(id) != null ;
         }
     }
 }

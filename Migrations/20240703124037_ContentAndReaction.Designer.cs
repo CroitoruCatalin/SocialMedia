@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SocialMedia.Models;
@@ -11,9 +12,11 @@ using SocialMedia.Models;
 namespace SocialMedia.Migrations
 {
     [DbContext(typeof(SocialContext))]
-    partial class SocialContextModelSnapshot : ModelSnapshot
+    [Migration("20240703124037_ContentAndReaction")]
+    partial class ContentAndReaction
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -169,9 +172,6 @@ namespace SocialMedia.Migrations
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("DislikeCount")
-                        .HasColumnType("integer");
-
                     b.Property<int?>("ImageId")
                         .HasColumnType("integer");
 
@@ -190,6 +190,7 @@ namespace SocialMedia.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("UserID")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("ID");
@@ -248,9 +249,6 @@ namespace SocialMedia.Migrations
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("DislikeCount")
-                        .HasColumnType("integer");
-
                     b.Property<int?>("ImageId")
                         .HasColumnType("integer");
 
@@ -265,7 +263,11 @@ namespace SocialMedia.Migrations
                     b.Property<DateTime>("ModifiedDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("PostID")
+                        .HasColumnType("integer");
+
                     b.Property<string>("UserID")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("ID");
@@ -471,7 +473,9 @@ namespace SocialMedia.Migrations
 
                     b.HasOne("SocialMedia.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserID");
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Image");
 
@@ -489,7 +493,8 @@ namespace SocialMedia.Migrations
                     b.HasOne("SocialMedia.Models.User", "User")
                         .WithMany("Posts")
                         .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Image");
 
@@ -499,11 +504,11 @@ namespace SocialMedia.Migrations
             modelBuilder.Entity("SocialMedia.Models.Reaction", b =>
                 {
                     b.HasOne("SocialMedia.Models.Comment", null)
-                        .WithMany("Reactions")
+                        .WithMany("Reaction")
                         .HasForeignKey("CommentID");
 
                     b.HasOne("SocialMedia.Models.Post", null)
-                        .WithMany("Reactions")
+                        .WithMany("Reaction")
                         .HasForeignKey("PostID");
 
                     b.HasOne("SocialMedia.Models.User", "User")
@@ -545,7 +550,7 @@ namespace SocialMedia.Migrations
 
             modelBuilder.Entity("SocialMedia.Models.Comment", b =>
                 {
-                    b.Navigation("Reactions");
+                    b.Navigation("Reaction");
                 });
 
             modelBuilder.Entity("SocialMedia.Models.Image", b =>
@@ -557,7 +562,7 @@ namespace SocialMedia.Migrations
                 {
                     b.Navigation("Comments");
 
-                    b.Navigation("Reactions");
+                    b.Navigation("Reaction");
                 });
 
             modelBuilder.Entity("SocialMedia.Models.User", b =>

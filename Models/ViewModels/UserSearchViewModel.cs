@@ -1,4 +1,4 @@
-﻿namespace SocialMedia.Models
+﻿namespace SocialMedia.Models.ViewModels
 {
     public class UserSearchViewModel
     {

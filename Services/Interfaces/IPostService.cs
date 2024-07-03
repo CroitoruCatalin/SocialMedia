@@ -5,12 +5,12 @@ namespace SocialMedia.Services.Interfaces
 {
     public interface IPostService
     {
-        Task<Post?> GetPostById(int postId);
+        Task<Post> GetPostByIdAsync(int postId);
         List<Post> GetAllPosts();
-        Task<List<Post>> GetAllPostsAsync();
-        Task CreatePost(Post post, ClaimsPrincipal userPrincipal);
-        Task UpdatePost(Post post);
-        Task DeletePost(int postId);
+        Task<IEnumerable<Post>> GetAllPostsAsync();
+        Task CreatePostAsync(Post post, ClaimsPrincipal userPrincipal);
+        Task UpdatePostAsync(Post post);
+        Task DeletePostAsync(int postId);
         public Post GetPostWithComments(int postId);
     }
 }

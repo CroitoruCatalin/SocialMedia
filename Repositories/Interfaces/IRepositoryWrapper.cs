@@ -5,8 +5,7 @@
         IUserRepository UserRepository { get; }
         IPostRepository PostRepository { get; }
         ICommentRepository CommentRepository { get; }
-        IPostLikeRepository PostLikeRepository { get; }
-        ICommentLikeRepository CommentLikeRepository { get; }
+        IReactionRepository ReactionRepository { get; }
 
         void Save();
         Task SaveAsync();
