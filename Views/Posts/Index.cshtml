@@ -1,4 +1,4 @@
-﻿@model IEnumerable<SocialMedia.Models.Post>
+﻿@model IEnumerable<int>
 
 @{
     ViewData["Title"] = "Posts Feed";
@@ -10,14 +10,18 @@
             Create Post
         </a>
     </div>
-    @foreach (var post in Model)
-    {
-        <partial name="_Post" model="post" />
-    }
-
+    <div id="posts-container"
+        <!-- container for posts, posts to be loaded via ajax-->
+        <div id="loading" style="display: none;">Loading...</div>
+    </div>
 
 </div>
 
 @section Scripts {
     <script src="~/js/PostLikeDislike.js"></script>
+    <script src="~/js/PostLoader.js"></script>
+    <script>
+        const postIds = @Html.Raw(Json.Serialize(Model));
+        console.log(postIds);
+    </script>
 }
