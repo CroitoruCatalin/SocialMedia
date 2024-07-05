@@ -10,6 +10,7 @@ using SocialMedia.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using System.Diagnostics;
+using SocialMedia.Models.ViewModels;
 
 namespace SocialMedia.Controllers
 {
@@ -18,11 +19,16 @@ namespace SocialMedia.Controllers
     {
         private readonly ICommentService _commentService;
         private readonly UserManager<User> _userManager;
+        private readonly IPostService _postService;
 
-        public CommentsController( ICommentService commentService, UserManager<User> userManager)
+        public CommentsController( 
+            ICommentService commentService, 
+            UserManager<User> userManager,
+            IPostService postService)
         {
             _commentService = commentService;
             _userManager = userManager;
+            _postService = postService;
         }
 
         
@@ -44,48 +50,37 @@ namespace SocialMedia.Controllers
         }
 
         // GET: Comments/Create
-        public IActionResult Create(int postId)
+        public async Task<IActionResult> Create(int postId)
         {
-            var comment = new Comment { PostID = postId };
-            return View(comment);
+            var parentPost = await _postService.GetPostByIdAsync(postId);
+
+            if (parentPost == null)
+            {
+                return NotFound();
+            }
+
+            var viewModel = new CommentCreateViewModel
+            {
+                Comment = new Comment { PostID = postId},
+                Post = parentPost
+            };
+
+            Console.WriteLine("Comment Creation for Post With ID: " + postId);
+            return View(viewModel);
         }
 
         // POST: Comments/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Message,PostID")] Comment comment)
+        public async Task<IActionResult> Create(CommentCreateViewModel viewModel)
         {
+            Comment comment = viewModel.Comment;
             comment.UserID = _userManager.GetUserId(User);
-            if (ModelState.IsValid)
-            {
-                //comment.UserID = _userManager.GetUserId(User);
-                comment.UserID = _userManager.GetUserId(User);
-                comment.CreationDate = DateTime.UtcNow;
-                await _commentService.CreateCommentAsync(comment);
-                return RedirectToAction("Details", "Posts", new { id = comment.PostID });
-            }
-            else
-            {
-                // Log ModelState errors for debugging
-                foreach (var modelStateKey in ModelState.Keys)
-                {
-                    var modelStateVal = ModelState[modelStateKey];
-                    if (modelStateVal.Errors.Any())
-                    {
-                        foreach (var error in modelStateVal.Errors)
-                        {
-                            // Log or Debug.WriteLine the error messages
-                            Debug.WriteLine($"ModelState Error: {error.ErrorMessage}");
-                        }
-                    }
-                }
-            }
-            foreach (var claim in User.Claims)
-            {
-                Debug.WriteLine($"Claim Type: {claim.Type}, Claim Value: {claim.Value}");
-            }
 
-            return View(comment);
+            comment.CreationDate = DateTime.UtcNow;
+            await _commentService.CreateCommentAsync(comment);
+            return RedirectToAction("Details", "Posts", new { id = comment.PostID });
+
         }
 
 

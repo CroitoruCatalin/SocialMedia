@@ -18,8 +18,8 @@ namespace SocialMedia.Models
 
 
         //dates
-        public DateTime CreationDate {  get; set; } = DateTime.Now;
-        public DateTime ModifiedDate { get; set;} = DateTime.Now;
+        public DateTime CreationDate {  get; set; } = DateTime.UtcNow;
+        public DateTime ModifiedDate { get; set;} = DateTime.UtcNow;
 
         //likes/reactions
         public ICollection<Reaction> Reactions { get; set; } = new List<Reaction>();

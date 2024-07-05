@@ -46,5 +46,10 @@ namespace SocialMedia.Repositories
                 .ToListAsync();
         }
 
+        public Task<User> GetUserByIdAsync(string Id)
+        {
+            User user = new User();
+            return _context.Users.FirstOrDefaultAsync(u => u.Id == Id);
+        }
     }
 }
