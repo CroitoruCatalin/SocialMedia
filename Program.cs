@@ -5,12 +5,15 @@ using SocialMedia.Repositories.Interfaces;
 using SocialMedia.Repositories;
 using SocialMedia.Services.Interfaces;
 using SocialMedia.Services;
+using SocialMedia.Hubs;
+using Microsoft.AspNetCore.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Logging.AddConfiguration(builder.Configuration.GetSection("Logging"));
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
+builder.Logging.SetMinimumLevel(LogLevel.Debug);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -45,6 +48,7 @@ builder.Services.Configure<IdentityOptions>(options =>
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+builder.Services.AddSignalR();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPostRepository, PostRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
@@ -55,6 +59,9 @@ builder.Services.AddScoped<IReactionService, ReactionService>();
 builder.Services.AddScoped<IRepositoryWrapper, RepositoryWrapper>();
 builder.Services.AddScoped<AuthenticationService>();
 builder.Services.AddScoped<ImageService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+builder.Services.AddSingleton<UserConnectionManager>();
 
 var app = builder.Build();
 
@@ -97,5 +104,6 @@ app.MapControllerRoute(
     pattern: "{controller=User}/{action=Search}");
 
 app.MapRazorPages();
+app.MapHub<NotificationsHub>("/notificationsHub");
 
 app.Run();

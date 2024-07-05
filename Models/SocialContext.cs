@@ -15,6 +15,7 @@ namespace SocialMedia.Models
         public DbSet<Reaction> Reactions { get; set; }
         public DbSet<UserUser> UserUsers { get; set; }
         public DbSet<Image> Images { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -58,6 +59,12 @@ namespace SocialMedia.Models
                 .HasOne(c => c.Post)
                 .WithMany(p => p.Comments)
                 .HasForeignKey(c => c.PostID)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<Notification>()
+                .HasOne(n => n.User)
+                .WithMany(u => u.Notifications)
+                .HasForeignKey(n => n.UserID)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

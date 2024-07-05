@@ -10,6 +10,7 @@ namespace SocialMedia.Repositories
         public IPostRepository? _postRepository;
         public ICommentRepository? _commentRepository;
         public IReactionRepository? _reactionRepository;
+        public INotificationRepository? _notificationRepository;
         public RepositoryWrapper(SocialContext socialContext)
         {
             _socialContext = socialContext;
@@ -64,6 +65,18 @@ namespace SocialMedia.Repositories
                 }
 
                 return _reactionRepository;
+            }
+        }
+
+        public INotificationRepository NotificationRepository
+        {
+            get
+            {
+                if(_notificationRepository == null)
+                {
+                    _notificationRepository = new NotificationRepository(_socialContext);
+                }
+                return _notificationRepository;
             }
         }
 

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SocialMedia.Models;
@@ -11,9 +12,11 @@ using SocialMedia.Models;
 namespace SocialMedia.Migrations
 {
     [DbContext(typeof(SocialContext))]
-    partial class SocialContextModelSnapshot : ModelSnapshot
+    [Migration("20240705093422_ExtraNotificationParams")]
+    partial class ExtraNotificationParams
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -249,9 +252,6 @@ namespace SocialMedia.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<bool>("IsRead")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("Message")
                         .IsRequired()
                         .HasColumnType("text");
@@ -262,15 +262,7 @@ namespace SocialMedia.Migrations
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("UserID")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("text");
 

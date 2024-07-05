@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using SocialMedia.Models;
 using SocialMedia.Models.ViewModels;
 using SocialMedia.Repositories.Interfaces;
@@ -11,10 +13,17 @@ namespace SocialMedia.Services
     public class UserService : IUserService
     {
         private readonly IRepositoryWrapper _repositoryWrapper;
+        private readonly UserManager<User> _userManager;
+        private readonly INotificationService _notificationService;
 
-        public UserService(IRepositoryWrapper repositoryWrapper)
+        public UserService(IRepositoryWrapper repositoryWrapper, 
+            UserManager<User> userManager,
+            INotificationService notificationService
+            )
         {
             _repositoryWrapper = repositoryWrapper;
+            _userManager = userManager;
+            _notificationService = notificationService;
         }
 
         public async Task<User?> GetUserById(string userId)
@@ -78,6 +87,39 @@ namespace SocialMedia.Services
             var userUser = new UserUser { UserId = userId, FriendId = followUserId };
             await _repositoryWrapper.UserRepository.FollowUser(userUser);
             await _repositoryWrapper.SaveAsync();
+
+
+
+            //notify the user who is being followed
+            var followee = await _userManager.FindByIdAsync(followUserId);
+            if(followee != null)
+            {
+                var follower = await _userManager.FindByIdAsync(userId);
+                if(follower != null)
+                {
+
+                    Notification notification = new Notification
+                    {
+                        UserID = followee.Id,
+                        User = followee,
+                        Message = $"{follower.FullName} is now following you!",
+                        Type = NotificationType.NewFollower,
+                        InstigatorID = follower.Id,
+                        Url = $"/Users/Details/{follower.Id}"
+                };
+                    _repositoryWrapper.NotificationRepository.Create(notification);
+                    followee.Notifications.Add(notification);
+                    _repositoryWrapper.UserRepository.Update(followee);
+
+                    var message = notification.Message;
+                    var url = notification.Url;
+                    await _notificationService
+                        .SendNotificationAsync(followee.Id, notification);
+
+                }
+            }
+
+
 
             return await _repositoryWrapper.UserRepository
                 .FindByCondition(u => u.Id == followUserId)

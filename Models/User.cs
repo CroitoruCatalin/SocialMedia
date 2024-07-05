@@ -11,5 +11,6 @@ namespace SocialMedia.Models
         public ICollection<Post>? Posts { get; set; }
         public virtual ICollection<UserUser> Followers { get; set; } = new List<UserUser>();
         public virtual ICollection<UserUser> Following { get; set; } = new List<UserUser>();
+        public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
     }
 }

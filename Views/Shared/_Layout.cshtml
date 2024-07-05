@@ -44,6 +44,17 @@
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="Users" asp-action="Details" asp-route-id="@UserManager.GetUserId(User)">Profile</a>
                             </li>
+
+
+                            <!-- notification dropdown-->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="notificationDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Notifications <span id="notificationCount" class="badge bg-danger">0</span>
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="notificationDropdownMenuLink" id="notificationDropdown">
+                                    <li>No notifications right now.</li>
+                                </ul>
+                            </li>
                         }
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Help">Help</a>
@@ -68,7 +79,10 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    <script src="~/js/UserSearch.js" append-version="true"></script>
+    <script src="~/js/UserSearch.js" asp-append-version="true"></script>
+    <script src="~/js/signalr/dist/browser/signalr.js" asp-append-version="true"></script>
+    <script src="~/js/signalr/dist/browser/signalr.min.js" asp-append-version="true"></script>
+    <script src="~/js/notification.js" asp-append-version="true"></script>
     
     @await RenderSectionAsync("Scripts", required: false)
 
