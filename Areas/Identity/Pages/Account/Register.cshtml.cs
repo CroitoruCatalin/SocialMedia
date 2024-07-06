@@ -60,7 +60,7 @@ namespace SocialMedia.Areas.Identity.Pages.Account
         public class InputModel
         {
             [Required]
-            [Display(Name = "Full Name")]
+            [Display(Name = "Username")]
             public string FullName { get; set; }
 
             [Required]

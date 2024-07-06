@@ -143,11 +143,13 @@ namespace SocialMedia.Services
                     PostId = p.ID,
                     IsFromFollowedUser = followingIds.Contains(p.UserID),
                     LikeCount = p.LikeCount,
-                    CreationDate = p.CreationDate
+                    CreationDate = p.CreationDate,
+                    CommentCount = p.CommentCount
                 })
                 .OrderByDescending(p => p.IsFromFollowedUser)
-                .ThenByDescending(p => p.LikeCount)
                 .ThenByDescending(p => p.CreationDate)
+                .ThenByDescending(p => p.LikeCount)
+                .ThenByDescending(p => p.CommentCount)
                 .Select(p => p.PostId)
                 .ToListAsync();
 
