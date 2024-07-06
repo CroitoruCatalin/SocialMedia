@@ -40,7 +40,7 @@ namespace SocialMedia.Repositories
         {
             return await _context
                 .Users
-                .Where(u => u.FullName.Contains(searchTerm))
+                .Where(u => u.FullName.ToUpper().Contains(searchTerm.ToUpper()))
                 .Include(u => u.ProfilePicture)
                 .Take(maxResults)
                 .ToListAsync();
