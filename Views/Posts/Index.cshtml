@@ -1,18 +1,18 @@
-﻿@model IEnumerable<int>
+﻿@model Tuple<IEnumerable<int>, SocialMedia.Models.ViewModels.PostPresentationViewModel>
 
 @{
     ViewData["Title"] = "Posts Feed";
+    var recommendations = Model.Item1;
+    var createPostModel = Model.Item2;
 }
 
 <div class="container pt-2 posts-index-container">
     <div class="d-flex justify-content-center mb-4">
-        <a class="btn btn-primary" asp-controller="Posts" asp-action="Create">
-            Create Post
-        </a>
+        <partial name="_PostCreator" model="createPostModel" />
     </div>
-    <div id="posts-container"
+    <div id="posts-container">
         <!-- container for posts, posts to be loaded via ajax-->
-        <div id="loading" style="display: none;">Loading...</div>
+        <div id="loading" style="display: none;"> Loading... </div>
     </div>
 
 </div>
@@ -21,7 +21,7 @@
     <script src="~/js/PostLikeDislike.js"></script>
     <script src="~/js/PostLoader.js"></script>
     <script>
-        const postIds = @Html.Raw(Json.Serialize(Model));
+        const postIds = @Html.Raw(Json.Serialize(recommendations));
         console.log(postIds);
     </script>
 }

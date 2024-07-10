@@ -7,6 +7,7 @@
         ICommentRepository CommentRepository { get; }
         IReactionRepository ReactionRepository { get; }
         INotificationRepository NotificationRepository { get; }
+        IImageRepository ImageRepository { get; }
 
         void Save();
         Task SaveAsync();

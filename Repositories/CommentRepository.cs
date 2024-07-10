@@ -11,11 +11,17 @@ namespace SocialMedia.Repositories
         {
         }
 
-        public async Task<Comment> GetCommentByIdAsync(int commentId)
+        public async Task<Comment?> GetCommentByIdAsync(int commentId)
         {
-            return await _SocialContext.Comments
+            var comment = await _SocialContext.Comments
                 .Include(c => c.Reactions)
                 .FirstOrDefaultAsync(c => c.ID == commentId);
+
+            if(comment == null)
+            {
+                return null;
+            }
+            return comment;
         }
 
         public async Task<IEnumerable<Comment>> GetCommentsByPostIdAsync(int postId)

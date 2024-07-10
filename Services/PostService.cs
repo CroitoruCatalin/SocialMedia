@@ -28,25 +28,70 @@ namespace SocialMedia.Services
             var user = await _userManager.GetUserAsync(userPrincipal);
             if(user != null)
             {
+
                 post.UserID = user.Id;
                 post.User = user;
                 post.CreationDate = DateTime.UtcNow;
                 post.ModifiedDate = post.CreationDate;
-  
 
-                _repositoryWrapper.PostRepository.Create(post);
+                Console.WriteLine("ServiceCreatePostAsync post.UserID: " + post.UserID);
+                Console.WriteLine("ServiceCreatePostAsync post.User.FullName: " + post.User.FullName);
+                user.Posts.Add(post);
+
+                if(post.Image != null)
+                {
+                    await _repositoryWrapper.ImageRepository.AddImageAsync(post.Image);
+                }
+
+                await _repositoryWrapper.PostRepository.AddPostAsync(post);
                 await _repositoryWrapper.SaveAsync();
             }
         }
 
         public async Task DeletePostAsync(int postId)
         {
+            //find the post
             var post = await _repositoryWrapper.PostRepository
                 .FindByCondition(p => p.ID == postId)
+                .Include(p => p.Image)
+                .Include(p => p.Reactions)
+                .Include(p => p.Comments)
+                .ThenInclude(c => c.Image)
+                .Include(p => p.Comments)
+                .ThenInclude(c => c.Reactions)
                 .FirstOrDefaultAsync();
+
+            //if post exists you can delete it
             if (post != null)
             {
-                _repositoryWrapper.PostRepository.Delete(post);
+                //get rid of post reactions
+                foreach (var reaction in post.Reactions)
+                {
+                    await _repositoryWrapper.ReactionRepository.RemoveReactionAsync(reaction.ReactionID);
+                }
+                //get rid of comments on the post
+                foreach (var comment in post.Comments)
+                {
+                    //get read of comment reactions
+                    foreach(var reaction in comment.Reactions)
+                    {
+                        await _repositoryWrapper.ReactionRepository.RemoveReactionAsync(reaction.ReactionID);
+                    }
+
+                    //get rid of comment image
+                    if (comment.Image != null)
+                    {
+                        _repositoryWrapper.ImageRepository.DeleteImage(comment.Image);
+                    }
+                    //delete comment
+                    await _repositoryWrapper.CommentRepository.DeleteCommentAsync(comment.ID);
+                }
+                //delete post image
+                if(post.Image != null)
+                { 
+                    _repositoryWrapper.ImageRepository.DeleteImage(post.Image);
+                }
+                await _repositoryWrapper.PostRepository.DeletePostAsync(post);
                 await _repositoryWrapper.SaveAsync();
             }
         }
@@ -86,9 +131,9 @@ namespace SocialMedia.Services
                 .ToListAsync();
         }
 
-        public Post GetPostWithCommentsAsync(int postId)
+        public async Task<Post> GetPostWithCommentsAsync(int postId)
         {
-            var postQuery = _repositoryWrapper
+            var post = await _repositoryWrapper
                 .PostRepository
                 .FindByCondition(p => p.ID == postId)
                 .Include(p => p.User)
@@ -96,16 +141,19 @@ namespace SocialMedia.Services
                 .Include(p => p.Comments)
                 .ThenInclude(c => c.User)
                 .Include(p => p.Comments)
-                .ThenInclude(c => c.Reactions);
-            return postQuery.FirstOrDefault();
+                .ThenInclude(c => c.Reactions)
+                .FirstOrDefaultAsync();
+
+            post ??= new Post();
+
+            return post;
         }
 
 
         public async Task<Post?> GetPostById(int postId)
         {
-            return await _context.Posts
-               .Include(p => p.Reactions)
-               .FirstOrDefaultAsync(p => p.ID == postId);
+            return await _repositoryWrapper.PostRepository
+                .GetPostByIdAsync(postId);
         }
 
         public async Task UpdatePostAsync(Post post)
@@ -114,7 +162,7 @@ namespace SocialMedia.Services
             await _repositoryWrapper.SaveAsync();
         }
 
-        public async Task<Post> GetPostByIdAsync(int postId)
+        public async Task<Post?> GetPostByIdAsync(int postId)
         {
             return await _repositoryWrapper.PostRepository
                 .GetPostByIdAsync(postId);
@@ -154,6 +202,17 @@ namespace SocialMedia.Services
                 .ToListAsync();
 
             return recommendations;
+        }
+
+        public async Task<PostPresentationViewModel> GetPostPresentation(int postId)
+        {
+            Console.WriteLine("Starting GetPostPresentation(" + postId + ") from PostService");
+            return await _repositoryWrapper.PostRepository.GetPostPresentationWithTopCommentAsync(postId);
+        }
+
+        public Task<IEnumerable<int>> GetPostIdsForUserProfileAsync(string userId)
+        {
+            return _repositoryWrapper.PostRepository.GetUserPostsAsync(userId);
         }
     }
 }

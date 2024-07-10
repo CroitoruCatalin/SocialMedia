@@ -21,6 +21,11 @@ namespace SocialMedia.Models
         {
             base.OnModelCreating(builder);
 
+            builder.Entity<User>()
+                .HasOne(u => u.ProfilePicture)
+                .WithMany()
+                .HasForeignKey(u => u.ProfilePictureId);
+
             // Configure the many-to-many relationship
             builder.Entity<UserUser>()
                 .HasKey(uu => new { uu.UserId, uu.FriendId });
@@ -37,23 +42,16 @@ namespace SocialMedia.Models
                 .HasForeignKey(uu => uu.FriendId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.Entity<User>()
-                .HasOne(u => u.ProfilePicture)
-                .WithOne(i => i.User)
-                .HasForeignKey<Image>(i => i.UserId)
-                .IsRequired(false); // If ProfilePictureId in User is nullable
-
-            builder.Entity<Image>()
-                .HasOne(i => i.User)
-                .WithOne(u => u.ProfilePicture)
-                .HasForeignKey<User>(u => u.ProfilePictureId)
-                .IsRequired(false); // If UserId in Image is nullable
-
             builder.Entity<Post>()
                 .HasOne(p => p.User)
                 .WithMany(u => u.Posts)
                 .HasForeignKey(p => p.UserID)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<Post>()
+                .HasOne(p => p.Image)
+                .WithMany()
+                .HasForeignKey(p => p.ImageID);
 
             builder.Entity<Comment>()
                 .HasOne(c => c.Post)
@@ -61,11 +59,13 @@ namespace SocialMedia.Models
                 .HasForeignKey(c => c.PostID)
                 .OnDelete(DeleteBehavior.Cascade);
 
+
             builder.Entity<Notification>()
                 .HasOne(n => n.User)
                 .WithMany(u => u.Notifications)
                 .HasForeignKey(n => n.UserID)
                 .OnDelete(DeleteBehavior.Cascade);
         }
+
     }
 }

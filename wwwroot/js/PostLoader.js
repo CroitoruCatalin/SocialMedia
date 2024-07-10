@@ -2,6 +2,14 @@ document.addEventListener('DOMContentLoaded', function () {
     const postsContainer = document.getElementById('posts-container');
     const loadingIndicator = document.getElementById('loading');
 
+    console.log('postsContainer:', postsContainer);
+    console.log('loadingIndicator:', loadingIndicator);
+
+    if (!loadingIndicator) {
+        console.error('Loading indicator not found!');
+        return;
+    }
+
     //postIds contains the recommendations and is sent thorough the razor views
     let currentIndex = 0; //is initialized with 0
 
@@ -9,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function loadPostDetails(postId) {
         loadingIndicator.style.display = 'block';
 
-        fetch(`/Posts/GetPostDetails?id=${postId}`)
+        fetch(`/Posts/GetPostPresentation?id=${postId}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);

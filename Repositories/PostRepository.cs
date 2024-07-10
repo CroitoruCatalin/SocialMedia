@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SocialMedia.Models;
+using SocialMedia.Models.ViewModels;
 using SocialMedia.Repositories.Interfaces;
 
 namespace SocialMedia.Repositories
@@ -10,7 +11,7 @@ namespace SocialMedia.Repositories
             : base(socialContext)
         {
         }
-        public async Task<Post> GetPostByIdAsync(int postId)
+        public async Task<Post?> GetPostByIdAsync(int postId)
         {
             return await _SocialContext.Posts
                 .Include(p => p.Comments)
@@ -29,13 +30,11 @@ namespace SocialMedia.Repositories
         public async Task AddPostAsync(Post post)
         {
             await _SocialContext.Posts.AddAsync(post);
-            await _SocialContext.SaveChangesAsync();
         }
 
         public async Task UpdatePostAsync(Post post)
         {
             _SocialContext.Posts.Update(post);
-            await _SocialContext.SaveChangesAsync();
         }
 
         public async Task DeletePostAsync(Post post)
@@ -44,8 +43,60 @@ namespace SocialMedia.Repositories
             if (_post != null)
             {
                 _SocialContext.Posts.Remove(_post);
-                await _SocialContext.SaveChangesAsync();
             }
+        }
+
+        public async Task<PostPresentationViewModel> GetPostPresentationWithTopCommentAsync(int postId)
+        {
+            Console.WriteLine("Starting GetPostPresentation(" + postId + ") from PostRepository");
+
+            var post = await _SocialContext.Posts
+            .Include(p => p.Comments)
+                .ThenInclude(c => c.Reactions)
+            .Include(p => p.Image)
+            .Include(p => p.Reactions)
+            .Include(p => p.User)
+                .ThenInclude(u => u.ProfilePicture)
+            .FirstOrDefaultAsync(p => p.ID == postId);
+
+
+            PostPresentationViewModel result = new PostPresentationViewModel();
+
+            if (post != null)
+            {
+                result = new PostPresentationViewModel(post);
+                var topComment = post.Comments.OrderByDescending(c => c.CreationDate).FirstOrDefault();
+                if(topComment != null)
+                {
+                    var topCommentAuthor = await _SocialContext.Users.FirstOrDefaultAsync(u => u.Id == topComment.UserID);
+                    if(topCommentAuthor != null)
+                    {
+                        topComment.User = topCommentAuthor;
+                    }
+
+
+                    result.TopComment = new CommentPresentationViewModel(topComment);
+                }
+            }
+            else
+            {
+
+            }
+
+            
+
+            Console.WriteLine("Returning the following post presentation:\n" + result.GetDetails("PostRepository"));
+
+            return result;
+        }
+
+        public async Task<IEnumerable<int>> GetUserPostsAsync(string userId)
+        {
+            return await _SocialContext.Posts
+                .Where(p => p.UserID == userId)
+                .OrderByDescending(p => p.CreationDate)
+                .Select(p => p.ID)
+                .ToListAsync();
         }
     }
 }

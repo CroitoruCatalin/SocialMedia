@@ -7,11 +7,11 @@ namespace SocialMedia.Models
         public int ReactionID { get; set; }
         public short Value { get; set; } = 0;
 
-        public string UserID {  get; set; }
-        public User User { get; set; }
+        public string UserID { get; set; } = String.Empty;
+        public User User { get; set; } = new User();
 
-        public int ReactableID {  get; set; }
-        public ReactableType ReactableType {  get; set; }
+        public int ReactableID { get; set; } = new int();
+        public ReactableType ReactableType { get; set; } = new ReactableType();
     }
 
     public enum ReactableType

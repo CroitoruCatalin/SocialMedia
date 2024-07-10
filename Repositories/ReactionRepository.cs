@@ -9,7 +9,7 @@ namespace SocialMedia.Repositories
         public ReactionRepository(SocialContext socialContext)
             : base(socialContext) { }
 
-        public async Task<Reaction> GetReactionByIdAsync(int reactionId)
+        public async Task<Reaction?> GetReactionByIdAsync(int reactionId)
         {
             return await _SocialContext.Reactions
                 .FirstOrDefaultAsync(r => r.ReactionID == reactionId);
@@ -25,7 +25,6 @@ namespace SocialMedia.Repositories
         public async Task AddReactionAsync(Reaction reaction)
         {
             await _SocialContext.Reactions.AddAsync(reaction);
-            await _SocialContext.SaveChangesAsync();
         }
 
         public async Task RemoveReactionAsync(int reactionId)
@@ -34,9 +33,22 @@ namespace SocialMedia.Repositories
             if (reaction != null)
             {
                 _SocialContext.Reactions.Remove(reaction);
-                await _SocialContext.SaveChangesAsync();
             }
         }
 
+        public async Task<Reaction?> GetUserReactionToPostAsync(string userId, int postId)
+        {
+            return await _SocialContext.Reactions
+                .FirstOrDefaultAsync(
+                r => r.UserID == userId &&
+                r.ReactableID == postId &&
+                r.ReactableType == ReactableType.Post);
+        }
+
+        public Reaction UpdateReaction(Reaction reaction)
+        {
+            _SocialContext.Reactions.Update(reaction);
+            return reaction;
+        }
     }
 }

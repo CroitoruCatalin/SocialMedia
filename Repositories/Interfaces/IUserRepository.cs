@@ -1,4 +1,5 @@
 ﻿using SocialMedia.Models;
+using SocialMedia.Models.ViewModels;
 
 namespace SocialMedia.Repositories.Interfaces
 {
@@ -10,5 +11,7 @@ namespace SocialMedia.Repositories.Interfaces
         Task UnfollowUser(UserUser userUser);
         Task<List<User>> GetFollowers(string userId);
         Task<List<User>> SearchUsersAsync(string searchTerm, int maxResults = 10);
+
+        UserPresentationViewModel GetUserPresentation(string id);
     }
 }

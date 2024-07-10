@@ -22,10 +22,12 @@ namespace SocialMedia.Controllers
         private readonly UserManager<User> _userManager;
         private readonly ILogger<UsersController> _logger;
         private readonly SocialContext _context;
+        private readonly IPostService _postService;
 
 
-        public UsersController(IUserService userService, UserManager<User> userManager, ILogger<UsersController> logger, SocialContext context)
+        public UsersController(IPostService postService, IUserService userService, UserManager<User> userManager, ILogger<UsersController> logger, SocialContext context)
         {
+            _postService = postService;
             _userService = userService;
             _userManager = userManager;
             _logger = logger;
@@ -60,6 +62,8 @@ namespace SocialMedia.Controllers
             }).ToList();
             return View(userList);
         }
+
+
         public async Task<IActionResult> Details(string? id)
         {
             if (id == null)
@@ -68,13 +72,15 @@ namespace SocialMedia.Controllers
             }
 
             var user = await _userService.GetUserByIdWithPostsAndFollowers(id);
-
+            var userPostIds = await _postService.GetPostIdsForUserProfileAsync(id);
             if (user == null)
             {
                 return NotFound();
             }
 
-            return View(user);
+            var model = new Tuple<IEnumerable<int>, User>(userPostIds, user);
+
+            return View(model);
         }
         [Authorize(Roles = "admin")]
         public IActionResult Create()
@@ -262,11 +268,7 @@ namespace SocialMedia.Controllers
             {
                 Id = u.Id,
                 FullName = u.FullName,
-                ProfilePicture = u.ProfilePicture != null ? new ImageViewModel
-                {
-                    ContentType = u.ProfilePicture.ContentType,
-                    Data = Convert.ToBase64String(u.ProfilePicture.Data)
-                } : null
+                ProfilePicture = u.ProfilePicture != null ? new (u.ProfilePicture): null
             }).ToList();
 
             return Json(results);

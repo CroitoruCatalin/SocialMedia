@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using SocialMedia.Models;
 using SocialMedia.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using System.Diagnostics;
-using SocialMedia.Models.ViewModels;
+using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace SocialMedia.Controllers
 {
@@ -20,18 +13,21 @@ namespace SocialMedia.Controllers
         private readonly ICommentService _commentService;
         private readonly UserManager<User> _userManager;
         private readonly IPostService _postService;
+        private readonly IUserService _userService;
 
-        public CommentsController( 
-            ICommentService commentService, 
+        public CommentsController(
+            ICommentService commentService,
             UserManager<User> userManager,
-            IPostService postService)
+            IPostService postService,
+            IUserService userService)
         {
             _commentService = commentService;
             _userManager = userManager;
             _postService = postService;
+            _userService = userService;
         }
 
-        
+
         // GET: Comments/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -50,34 +46,63 @@ namespace SocialMedia.Controllers
         }
 
         // GET: Comments/Create
+        [HttpGet]
         public async Task<IActionResult> Create(int postId)
         {
             var parentPost = await _postService.GetPostByIdAsync(postId);
-
-            if (parentPost == null)
+            string? currentUserId = _userManager.GetUserId(User);
+            if(currentUserId == null)
             {
                 return NotFound();
             }
 
-            var viewModel = new CommentCreateViewModel
+            User? currentUser = await _userService.GetUserById(currentUserId);
+
+            if (parentPost == null || currentUser == null)
             {
-                Comment = new Comment { PostID = postId},
-                Post = parentPost
+                return NotFound();
+            }
+
+            var comment = new Comment
+            {
+                PostID = parentPost.ID,
+                Post = parentPost,
+                UserID = currentUser.Id,
+                User = currentUser
             };
 
+
             Console.WriteLine("Comment Creation for Post With ID: " + postId);
-            return View(viewModel);
+            return View(comment);
         }
 
         // POST: Comments/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CommentCreateViewModel viewModel)
+        public async Task<IActionResult> Create(Comment comment)
         {
-            Comment comment = viewModel.Comment;
-            comment.UserID = _userManager.GetUserId(User);
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (comment.Post == null)
+            {
+                Console.WriteLine("CREATECOMMENT comment.Post is null.");
+                return NotFound();
+            }
+            if(currentUser == null)
+            {
+                Console.WriteLine("CREATECOMMENT currentUser is null.");
+                return NotFound();
+            }
+            comment.User = currentUser;
+            comment.UserID = currentUser.Id;
+            if(currentUser != comment.User)
+            {
+                Console.WriteLine("CREATECOMMENT currentUser.Id="+currentUser.Id
+                    +" while comment.User.Id="+comment.User.Id);
+                return NotFound();
+            }
 
             comment.CreationDate = DateTime.UtcNow;
+            comment.ModifiedDate = comment.CreationDate;
             await _commentService.CreateCommentAsync(comment);
             return RedirectToAction("Details", "Posts", new { id = comment.PostID });
 

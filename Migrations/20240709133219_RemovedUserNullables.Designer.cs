@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SocialMedia.Models;
@@ -11,9 +12,11 @@ using SocialMedia.Models;
 namespace SocialMedia.Migrations
 {
     [DbContext(typeof(SocialContext))]
-    partial class SocialContextModelSnapshot : ModelSnapshot
+    [Migration("20240709133219_RemovedUserNullables")]
+    partial class RemovedUserNullables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -172,11 +175,7 @@ namespace SocialMedia.Migrations
                     b.Property<int>("DislikeCount")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Embed")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int?>("ImageID")
+                    b.Property<int>("ImageId")
                         .HasColumnType("integer");
 
                     b.Property<int>("LikeCount")
@@ -199,7 +198,7 @@ namespace SocialMedia.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("ImageID");
+                    b.HasIndex("ImageId");
 
                     b.HasIndex("PostID");
 
@@ -232,7 +231,6 @@ namespace SocialMedia.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("ImageId");
@@ -304,11 +302,7 @@ namespace SocialMedia.Migrations
                     b.Property<int>("DislikeCount")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Embed")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int?>("ImageID")
+                    b.Property<int>("ImageId")
                         .HasColumnType("integer");
 
                     b.Property<int>("LikeCount")
@@ -328,7 +322,7 @@ namespace SocialMedia.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("ImageID");
+                    b.HasIndex("ImageId");
 
                     b.HasIndex("UserID");
 
@@ -444,7 +438,8 @@ namespace SocialMedia.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
 
-                    b.HasIndex("ProfilePictureId");
+                    b.HasIndex("ProfilePictureId")
+                        .IsUnique();
 
                     b.ToTable("AspNetUsers", (string)null);
                 });
@@ -519,7 +514,9 @@ namespace SocialMedia.Migrations
                 {
                     b.HasOne("SocialMedia.Models.Image", "Image")
                         .WithMany()
-                        .HasForeignKey("ImageID");
+                        .HasForeignKey("ImageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("SocialMedia.Models.Post", "Post")
                         .WithMany("Comments")
@@ -555,7 +552,9 @@ namespace SocialMedia.Migrations
                 {
                     b.HasOne("SocialMedia.Models.Image", "Image")
                         .WithMany()
-                        .HasForeignKey("ImageID");
+                        .HasForeignKey("ImageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("SocialMedia.Models.User", "User")
                         .WithMany("Posts")
@@ -590,10 +589,8 @@ namespace SocialMedia.Migrations
             modelBuilder.Entity("SocialMedia.Models.User", b =>
                 {
                     b.HasOne("SocialMedia.Models.Image", "ProfilePicture")
-                        .WithMany()
-                        .HasForeignKey("ProfilePictureId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithOne("User")
+                        .HasForeignKey("SocialMedia.Models.User", "ProfilePictureId");
 
                     b.Navigation("ProfilePicture");
                 });
@@ -620,6 +617,11 @@ namespace SocialMedia.Migrations
             modelBuilder.Entity("SocialMedia.Models.Comment", b =>
                 {
                     b.Navigation("Reactions");
+                });
+
+            modelBuilder.Entity("SocialMedia.Models.Image", b =>
+                {
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("SocialMedia.Models.Post", b =>

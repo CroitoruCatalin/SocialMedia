@@ -31,7 +31,11 @@ namespace SocialMedia.Controllers
         public async Task<IActionResult> GetNotifications()
         {
             var userId = _userManager.GetUserId(User);
-            var notifications = await _notificationService.GetNotificationsForUserAsync(userId);
+            List<Notification> notifications = [];
+            if (userId != null)
+            {
+                notifications = await _notificationService.GetNotificationsForUserAsync(userId);
+            }
             return Ok(notifications);
         }
 
@@ -39,7 +43,7 @@ namespace SocialMedia.Controllers
         [HttpPost("MarkAsRead")]
         public async Task<IActionResult> MarkAsRead([FromBody] NotificationIdDto notificationIdDto)
         {
-            if (notificationIdDto?.NotificationId <= 0)
+            if (notificationIdDto.NotificationId <= 0)
             {
                 return BadRequest("Invalid notification ID.");
             }

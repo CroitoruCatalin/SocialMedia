@@ -2,6 +2,7 @@
 using SocialMedia.Repositories.Interfaces;
 using SocialMedia.Repositories;
 using Microsoft.EntityFrameworkCore;
+using SocialMedia.Models.ViewModels;
 
 namespace SocialMedia.Repositories
 {
@@ -50,6 +51,17 @@ namespace SocialMedia.Repositories
         {
             User user = new User();
             return _context.Users.FirstOrDefaultAsync(u => u.Id == Id);
+        }
+
+        public UserPresentationViewModel GetUserPresentation(string id)
+        {
+            User? user = _SocialContext.Users.Include(u => u.ProfilePicture).FirstOrDefault(u=>u.Id == id);
+            UserPresentationViewModel result = new UserPresentationViewModel();
+            if(user != null)
+            {
+                result = new UserPresentationViewModel(user);
+            }
+            return result;
         }
     }
 }

@@ -195,5 +195,10 @@ namespace SocialMedia.Services
             return await _repositoryWrapper
                 .UserRepository.SearchUsersAsync(searchTerm, maxResults);
         }
+
+        public UserPresentationViewModel GetUserPresentation(string userId)
+        {
+            return _repositoryWrapper.UserRepository.GetUserPresentation(userId);
+        }
     }
 }

@@ -1,16 +1,16 @@
-﻿@model SocialMedia.Models.Post
+﻿@model SocialMedia.Models.ViewModels.PostPresentationViewModel
 @inject Microsoft.AspNetCore.Mvc.IUrlHelper Url
 @using Microsoft.AspNetCore.Identity
 @inject UserManager<User> UserManager
 
-<div class="card mb-3 post-card border-0">
+<div class="card mb-3 post-card border-0" >
     <div class="card-header post-card-header bg-white">
         <div class="d-flex align-items-center">
             <div class="post-profile-div p-2">
                 <a asp-controller="Users" asp-action="Details" asp-route-id="@Model.User.Id" class="text-decoration-none text-dark">
                     @if (Model.User.ProfilePicture != null)
                     {
-                        <img src="data:@Model.User.ProfilePicture.ContentType;base64,@Convert.ToBase64String(Model.User.ProfilePicture.Data)" class="rounded-circle" alt="@Model.User.FullName" />
+                        <img src="data:@Model.User.ProfilePicture.ContentType;base64,@Model.User.ProfilePicture.Data" class="rounded-circle" alt="@Model.User.FullName" />
                     }
                     else
                     {
@@ -31,27 +31,41 @@
         </div>
     </div>
     <div class="card-body">
+        <!--Message-->
         <p class="card-text">@Model.Message</p>
-        <a class="btn btn-link" asp-controller="Posts" asp-action="Details" asp-route-id="@Model.ID">View Details</a>
-        <div class="d-flex justify-content-end">
-            @if (Model.Reactions != null)
-            {
-                var likeCount = Model.LikeCount;
-                var dislikeCount = Model.DislikeCount;
-                <div class="d-flex align-items-center">
-                    <button type="button" class="btn btn-light me-3" onclick="likePost(@Model.ID, '@(Url.Action("Like", "Reactions"))')">
-                        👍 <span id="like-count-@Model.ID">@likeCount</span>
-                    </button>
 
-                    <button type="button" class="btn btn-light" onclick="dislikePost(@Model.ID, '@(Url.Action("Dislike", "Reactions"))')">
-                        👎 <span id="dislike-count-@Model.ID">@dislikeCount</span>
-                    </button>
-                </div>
-            }
-        </div>
-        @if (Model.Comments != null && Model.Comments.Any())
+        <!--Image-->
+        @if (Model.Image != null && !string.IsNullOrEmpty(Model.Image.Data))
         {
-            var firstComment = Model.Comments.OrderBy(c => c.CreationDate).FirstOrDefault();
+            <img src="data:@Model.Image.ContentType;base64,@Model.Image.Data" class="post-image" alt="Post Image" />
+        }
+
+        <!-- Link and Reactions -->
+        <div class="row mt-3">
+            <div class="col-12">
+                <a class="btn btn-link" asp-controller="Posts" asp-action="Details" asp-route-id="@Model.ID">View Details</a>
+            </div>
+            <div class="col-12 d-flex justify-content-end">
+                @if (Model.Reactions != null)
+                {
+                    var likeCount = Model.LikeCount;
+                    var dislikeCount = Model.DislikeCount;
+                    <div class="d-flex align-items-center">
+                        <button type="button" class="btn btn-light" onclick="likePost(@Model.ID, '@(Url.Action("Like", "Reactions"))')">
+                            👍 <span id="like-count-@Model.ID">@likeCount</span>
+                        </button>
+
+                        <button type="button" class="btn btn-light" onclick="dislikePost(@Model.ID, '@(Url.Action("Dislike", "Reactions"))')">
+                            👎 <span id="dislike-count-@Model.ID">@dislikeCount</span>
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+
+        @if (Model.CommentCount != 0)
+        {
+            var firstComment = Model.TopComment;
 
             if (firstComment?.User != null)
             {

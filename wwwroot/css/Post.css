@@ -4,6 +4,11 @@
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+.post-card .post-creation-card{
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
 
 .card-header {
     background-color: #f8f9fa;
@@ -54,8 +59,15 @@
 }
 
 
-.post-card {
+.post-card .post-creation-card{
     border: 1px solid #ddd;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.post-image {
+    margin-left: auto;
+    max-width: 100%;
+    max-height: 400px;
+    object-fit: cover;
 }

@@ -37,40 +37,56 @@ namespace SocialMedia.Controllers
         [HttpPost]
         public async Task<IActionResult> Like(int postId)
         {
-            var userId = _userManager.GetUserId(User);
-
-            var reaction = new Reaction
-            {
-                UserID = userId,
-                ReactableID = postId,
-                ReactableType = ReactableType.Post,
-                Value = 1
-            };
-
-            await _reactionService.AddOrUpdateReactionAsync(reaction, postId);
-
+            var user = await _userManager.GetUserAsync(User);
             var post = await _postService.GetPostByIdAsync(postId);
 
-            return Json(new { likeCount = post.LikeCount, dislikeCount = post.DislikeCount});
+            Console.WriteLine("EXECUTING POST LIKE ON postId: "+ postId);
+            if (post == null)
+            {
+                return RedirectToAction("Home");
+            }
+
+            if (user != null)
+            {
+
+                Console.WriteLine("EXECUTING POST LIKE by UserID: " + user.Id + "\n\t and FullName: " + user.FullName);
+                var reaction = new Reaction
+                {
+                    UserID = user.Id,
+                    User = user,
+                    ReactableID = postId,
+                    ReactableType = ReactableType.Post,
+                    Value = 1
+                };
+
+                await _reactionService.AddOrUpdateReactionAsync(reaction, post);
+
+                return Json(new { likeCount = post.LikeCount, dislikeCount = post.DislikeCount });
+            }
+
+            return RedirectToPage("/Account/Login", new { area = "Identity" });
         }
 
         [HttpPost]
         public async Task<IActionResult> Dislike(int postId)
         {
-            var userId = _userManager.GetUserId(User);
-
-            var reaction = new Reaction
-            {
-                UserID = userId,
-                ReactableID = postId,
-                ReactableType = ReactableType.Post,
-                Value = -1
-            };
-
-            await _reactionService.AddOrUpdateReactionAsync(reaction, postId);
+            var user = await _userManager.GetUserAsync(User);
             var post = await _postService.GetPostByIdAsync(postId);
+            if(post != null && user != null)
+            {
+                var reaction = new Reaction
+                {
+                    UserID = user.Id,
+                    ReactableID = postId,
+                    ReactableType = ReactableType.Post,
+                    Value = -1
+                };
 
-            return Json(new { likeCount = post.LikeCount, dislikeCount = post.DislikeCount });
+                await _reactionService.AddOrUpdateReactionAsync(reaction, post);
+
+                return Json(new { likeCount = post.LikeCount, dislikeCount = post.DislikeCount });
+            }
+            return RedirectToPage("/Account/Login", new { area = "Identity" });
         }
 
     }

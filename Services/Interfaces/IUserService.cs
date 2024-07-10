@@ -21,5 +21,7 @@ namespace SocialMedia.Services.Interfaces
         Task<User?> GetUserByIdWithPostsAndFollowers(string userId);
 
         Task<List<User>> SearchUsersAsync(string searchTerm, int maxResults = 10);
+
+        UserPresentationViewModel GetUserPresentation(string userId);
     }
 }

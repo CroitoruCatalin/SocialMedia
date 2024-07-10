@@ -1,0 +1,55 @@
+﻿@model SocialMedia.Models.ViewModels.PostPresentationViewModel
+@inject Microsoft.AspNetCore.Mvc.IUrlHelper Url
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<User> UserManager
+
+<div class="card mb-3 post-card post-creation-card border-0">
+    <div class="card-header post-card-header bg-white">
+        <div class="d-flex align-items-center">
+            <div class="post-profile-div p-2">
+                <a asp-controller="Users" asp-action="Details" asp-route-id="@Model.User.Id" class="text-decoration-none text-dark">
+                    @if (Model.User.ProfilePicture != null)
+                    {
+                        <img src="data:@Model.User.ProfilePicture.ContentType;base64,@Model.User.ProfilePicture.Data" class="rounded-circle" alt="@Model.User.FullName" />
+                    }
+                    else
+                    {
+                        <img src="/assets/images/default.png" class="rounded-circle" alt="Default Profile Picture" />
+                    }
+                </a>
+            </div>
+            <div class="post-username p-2">
+                <strong>
+                    <a asp-controller="Users" asp-action="Details" asp-route-id="@Model.User.Id" class="text-decoration-none text-dark">
+                        @Model.User.FullName
+                    </a>
+                </strong>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-body">
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+            <!-- Message Input -->
+            <div class="form-group">
+                <input asp-for="Message" class="form-control form-control-lg" placeholder="What's on your mind?" />
+                <span asp-validation-for="Message" class="text-danger"></span>
+            </div>
+
+            <!-- Image Upload -->
+            <div class="form-group mt-3">
+                <input type="file" name="ImageFile" class="form-control-file" />
+                <span asp-validation-for="Image" class="text-danger"></span>
+            </div>
+
+            <!-- UserID (hidden) -->
+            <input type="hidden" asp-for="UserID" />
+
+            <!-- Submit Button -->
+            <div class="form-group mt-4">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>

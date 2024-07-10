@@ -8,7 +8,7 @@ namespace SocialMedia.Services.Interfaces
         Task CreateReactionAsync(Reaction reaction);
         Task DeleteReactionAsync(int reactionId);
 
-        Task<Reaction> GetUserReactionAsync(string userId, int postId);
-        Task AddOrUpdateReactionAsync(Reaction reaction, int postId);
+        Task<Reaction?> GetUserReactionAsync(string userId, int postId);
+        Task AddOrUpdateReactionAsync(Reaction reaction, Post post);
     }
 }
