@@ -42,6 +42,7 @@
             CommentCount = post.CommentCount;
             User = new UserPresentationViewModel(post.User);
             TopComment = new CommentPresentationViewModel(post.Comments.OrderByDescending(c => c.CreationDate).FirstOrDefault()?? new Comment());
+            YoutubeEmbed = post.Embed;
         }
 
         public PostPresentationViewModel()

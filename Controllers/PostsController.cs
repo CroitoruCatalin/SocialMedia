@@ -215,10 +215,21 @@ namespace SocialMedia.Controllers
 
         private string ExtractYoutubeVideoId(string message)
         {
-            var uri = new Uri(message);
-            var query = HttpUtility.ParseQueryString(uri.Query);
-            return query["v"];
-        }
+            string videoParam = "v=";
+            int index = message.IndexOf(videoParam);
+            if(index == -1)
+            {
+                return string.Empty;
+            }
+
+            int videoIdStart = index + videoParam.Length;
+            int videoIdEnd = message.IndexOf('&', videoIdStart);
+            if(videoIdEnd == -1)
+            {
+                videoIdEnd = message.Length;
+            }
+            return message.Substring(videoIdStart, videoIdEnd - videoIdStart);
+;        }
 
         public async Task<IActionResult> AddComment(int postId)
         {

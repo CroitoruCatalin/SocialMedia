@@ -5,9 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 using SocialMedia.Models;
 using SocialMedia.Services.Interfaces;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -33,13 +30,20 @@ namespace SocialMedia.Controllers
             _logger = logger;
             _context = context;
         }
+
+        [Authorize(Roles="Admin")]
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var currentUser = await _userManager.GetUserAsync(User);
-            
+
             var userRoles = await _userManager.GetRolesAsync(currentUser);
+            if(currentUser == null)
+            {
+                return NotFound();
+            }
             _logger.LogInformation("\nUser roles: {Roles}", string.Join(",", userRoles));
-            if (!userRoles.Contains("admin"))
+            if (!userRoles.Contains("Admin"))
             {
                 _logger.LogWarning("\n========================>User does not have admin role, redirecting...");
                 return RedirectToAction("Index", "Posts");
@@ -48,6 +52,7 @@ namespace SocialMedia.Controllers
             {
                 _logger.LogWarning("=>>>>>>>>>>>>>>>Current user not found.");
             }
+
             
             return View(await _userService.GetAllUsers());
         }
@@ -82,12 +87,12 @@ namespace SocialMedia.Controllers
 
             return View(model);
         }
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
         }
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(User user)
@@ -99,7 +104,7 @@ namespace SocialMedia.Controllers
             }
             return View(user);
         }
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(string? id)
         {
             if (id == null)
@@ -114,7 +119,7 @@ namespace SocialMedia.Controllers
             }
             return View(user);
         }
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, User user)
@@ -131,7 +136,7 @@ namespace SocialMedia.Controllers
             }
             return View(user);
         }
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(string? id)
         {
             if (id == null)
@@ -147,7 +152,7 @@ namespace SocialMedia.Controllers
 
             return View(user);
         }
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)

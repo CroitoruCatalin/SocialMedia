@@ -50,7 +50,7 @@
                             <!-- notification dropdown-->
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="notificationDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Notifications <span id="notificationCount" class="badge bg-danger">0</span>
+                                    Notifications <span id="notificationCount" class="badge bg-danger" style="display: none;">0</span>
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="notificationDropdownMenuLink" id="notificationDropdown">
                                     <li>No notifications right now.</li>
@@ -67,7 +67,7 @@
         </nav>
     </header>
     <div class="">
-        <div class="container mx-auto feed">
+        <div class="container mx-auto px-md-4 px-sm-0 feed">
             <main role="main" class="">
                 @RenderBody()
             </main>

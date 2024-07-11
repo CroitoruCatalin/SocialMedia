@@ -31,10 +31,21 @@ namespace SocialMedia.Controllers
         public async Task<IActionResult> GetNotifications()
         {
             var userId = _userManager.GetUserId(User);
-            List<Notification> notifications = [];
+            List<NotificationDTO> notifications = [];
             if (userId != null)
             {
-                notifications = await _notificationService.GetNotificationsForUserAsync(userId);
+                var userNotifications = await _notificationService.GetNotificationsForUserAsync(userId);
+                foreach (var notification in userNotifications)
+                {
+                    var user = await _userManager.FindByIdAsync(notification.UserID);
+                    var profilePicture = user.ProfilePicture;
+                    var profilePictureContentType = user.ProfilePicture.ContentType;
+
+                    var notif = await _notificationService.GetNotificationDTO(userId, notification);
+                    notifications.Add(notif);
+
+                }
+
             }
             return Ok(notifications);
         }

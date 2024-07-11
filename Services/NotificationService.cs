@@ -74,5 +74,27 @@ namespace SocialMedia.Services
                 .ToListAsync();
         }
 
+        public async Task<NotificationDTO?> GetNotificationDTO(string userId, Notification notification)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            string senderId = notification.InstigatorID;
+            var instigator = await _userManager.FindByIdAsync(senderId);
+            Image image = await _context.Images.FirstOrDefaultAsync(i => i.ImageId == instigator.ProfilePictureId);
+
+            if (user != null)
+            {
+                var profilePictureData = image != null
+                    ? Convert.ToBase64String(image.Data)
+                    : string.Empty;
+
+
+                NotificationDTO notificationDTO = new NotificationDTO(notification);
+                notificationDTO.UserProfilePictureData = profilePictureData;
+                notificationDTO.UserProfilePictureContentType = image.ContentType ?? "image/png";
+
+                return notificationDTO;
+            }
+            return null;
+        }
     }
 }

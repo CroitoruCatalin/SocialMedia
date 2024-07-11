@@ -21,7 +21,7 @@
 
         public string GetDetails(string caller)
         {
-            return "ImageViewModel in "+caller+" has:\nImageId="+ImageId+"\nContentType="+ContentType+"\nData="+Data;
+            return "ImageViewModel in "+caller+" has:\nImageId="+ImageId+"\nContentType="+ContentType;
         }
     }
 }

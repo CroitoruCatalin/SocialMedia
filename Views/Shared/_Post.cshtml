@@ -40,6 +40,13 @@
             <img src="data:@Model.Image.ContentType;base64,@Model.Image.Data" class="post-image" alt="Post Image" />
         }
 
+        <!--Youtube embed-->
+        @if(!string.IsNullOrEmpty(Model.YoutubeEmbed)){
+            @Html.Raw(@Model.YoutubeEmbed);
+        }
+        
+        
+
         <!-- Link and Reactions -->
         <div class="row mt-3">
             <div class="col-12">

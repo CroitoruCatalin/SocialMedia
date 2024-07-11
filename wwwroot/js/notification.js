@@ -94,6 +94,8 @@ $(document).ready(function () {
                 }
             });
         });
+
+        updateNotificationBadge();
     }
 
     function updateNotificationBadge() {
